@@ -4,12 +4,30 @@
 #include <iostream>
 
 namespace sudoku {
+	int looped = 0;
+
 	SudokuGame::SudokuGame(SudokuGame::Difficulty difficulty) {
 		history.emplace_back();
 		history.back().fill_random(0);
-		if (difficulty == Difficulty::EASY) {
-			// delete 38 fields
-			// check if unique
+
+		int remaining = 81;
+		if (difficulty == Difficulty::EASY) remaining = 38;
+		if (difficulty == Difficulty::EXPERT) remaining = 28;
+
+		SudokuBoard backup = history.back();
+		for (int i = 0; i < 81 - remaining; i++) {
+			while (true) {
+				SudokuValue column = mk::Random::getInt(1, 9);
+				SudokuValue row    = mk::Random::getInt(1, 9);
+				auto&&      sq     = history.back()(column, row);
+				if (sq.main_digit.has_value()) {
+					sq.main_digit.reset();
+					if (history.back().is_ambiguous())
+						sq.main_digit = backup(column, row).main_digit;
+					else
+						break;
+				}
+			}
 		}
 	}
 
@@ -103,6 +121,8 @@ namespace sudoku {
 		return out;
 	}
 
+	int getLooped() { return looped; }
+
 	bool SudokuBoard::fill(int depth) {
 		static int digit_tried = 0;
 		//		if (depth == 0) digit_tried = 0;
@@ -136,23 +156,48 @@ namespace sudoku {
 		return true;
 	}
 
+	bool SudokuBoard::can_fill() const {
+		std::array<SudokuValue, 9> order = value_range;
+		mk::Random::shuffle(order.begin(), order.end());
+
+		SudokuBoard cpy = *this;
+		for (SudokuValue column: value_range) {
+			for (SudokuValue row: value_range) {
+				if (!operator()(column, row).main_digit.has_value()) {
+					// We do the backtracking from here.
+					for (SudokuValue next_value: order) {
+						looped++;
+						if (can_place_digit(column, row, next_value)) {
+							cpy(column, row).main_digit = next_value;
+							if (cpy.can_fill()) return true;
+						}
+					}
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	bool SudokuBoard::is_ambiguous() const {
 		std::array<SudokuValue, 9> order = value_range;
 		mk::Random::shuffle(order.begin(), order.end());
 
+		SudokuBoard cpy = *this;
 		for (SudokuValue column: value_range) {
 			for (SudokuValue row: value_range) {
 				if (!operator()(column, row).main_digit.has_value()) {
 					// We do the backtracking from here.
 					bool found = false;
 					for (SudokuValue next_value: order) {
-						SudokuBoard cpy = *this;
-						if (cpy.place_digit(column, row, next_value)) {
-							if (cpy.fill()) {
+						looped++;
+						if (can_place_digit(column, row, next_value)) {
+							cpy(column, row).main_digit = next_value;
+							if (cpy.is_ambiguous()) return true;
+							if (cpy.can_fill()) {
 								if (found) return true;
 								found = true;
 							}
-							if (cpy.is_ambiguous()) return true;
 						}
 					}
 					return false;
@@ -161,5 +206,4 @@ namespace sudoku {
 		}
 		return false;
 	}
-
 }

@@ -5,6 +5,8 @@
 #include "Random/Random.hpp"
 
 namespace sudoku {
+	int getLooped();
+
 	class SudokuValue {
 	public:
 		template<class T>
@@ -63,10 +65,24 @@ namespace sudoku {
 
 		friend std::ostream& operator<<(std::ostream& out, const SudokuBoard& board);
 
+		/**
+		 * @brief Tries to fills the board. If fails to fill the board state is incorrect.
+		 * @return True if filled successfully, false otherwise.
+		 */
+		bool fill(int depth = 0);
+
+		/**
+		 * @brief Checks if it's possible to solve the board.
+		 */
+		[[nodiscard]]
+		bool can_fill() const;
+
+		/**
+		 * @brief Checks is there is an only one way to solve this board.
+		 */
 		[[nodiscard]]
 		bool is_ambiguous() const;
 
-		bool fill(int depth = 0);
 	private:
 		/**
 		 * @brief A function that helps to iterate over all squares in a 3x3 square,
@@ -78,9 +94,9 @@ namespace sudoku {
 
 	class SudokuGame {
 	public:
-		enum class Difficulty { NONE, EASY };
+		enum class Difficulty { NONE, EASY, EXPERT };
 
-		SudokuGame(Difficulty difficulty);
+		explicit SudokuGame(Difficulty difficulty);
 
 		[[nodiscard]]
 		const SudokuBoard& getBoard() const;
