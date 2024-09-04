@@ -83,7 +83,9 @@ namespace sudoku {
 		[[nodiscard]]
 		bool is_ambiguous() const;
 
+
 	private:
+		std::pair<bool, bool> is_ambiguous2() const;
 		/**
 		 * @brief A function that helps to iterate over all squares in a 3x3 square,
 		 * that should contain unique digits. This returns column or row numbers.
@@ -100,6 +102,8 @@ namespace sudoku {
 
 		[[nodiscard]]
 		const SudokuBoard& getBoard() const;
+
+		void fill();
 
 
 	private:

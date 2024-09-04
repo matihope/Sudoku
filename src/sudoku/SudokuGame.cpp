@@ -8,7 +8,7 @@ namespace sudoku {
 
 	SudokuGame::SudokuGame(SudokuGame::Difficulty difficulty) {
 		history.emplace_back();
-		history.back().fill_random(0);
+		history.back().fill_random();
 
 		int remaining = 81;
 		if (difficulty == Difficulty::EASY) remaining = 38;
@@ -32,6 +32,10 @@ namespace sudoku {
 	}
 
 	const SudokuBoard& SudokuGame::getBoard() const { return history.back(); }
+
+	void SudokuGame::fill() {
+		history.back().fill();
+	}
 
 	void SudokuBoard::fill_random(std::optional<int> seed) {
 		// Set the seed
@@ -137,10 +141,9 @@ namespace sudoku {
 					// We do the backtracking from here.
 					int test = 1;
 					for (SudokuValue next_value: order) {
-						//						std::cerr << "Trying at: " << depth << " value " <<
-						// test++ << "/" << "9 - "
-						//								  << next_value << ", conducted test: " <<
-						//++digit_tried << '\n';
+//						std::cerr << "Trying at: " << depth << " value " << test++ << "/" << "9 - "
+//								  << next_value << ", conducted test: " << ++digit_tried << '\n';
+
 						if (can_place_digit(column, row, next_value)) {
 							cpy(column, row).main_digit = next_value;
 							if (cpy.fill(depth + 1)) {
@@ -164,7 +167,6 @@ namespace sudoku {
 		for (SudokuValue column: value_range) {
 			for (SudokuValue row: value_range) {
 				if (!operator()(column, row).main_digit.has_value()) {
-					// We do the backtracking from here.
 					for (SudokuValue next_value: order) {
 						looped++;
 						if (can_place_digit(column, row, next_value)) {
@@ -179,7 +181,9 @@ namespace sudoku {
 		return true;
 	}
 
-	bool SudokuBoard::is_ambiguous() const {
+	bool SudokuBoard::is_ambiguous() const { return is_ambiguous2().first; }
+
+	std::pair<bool, bool> SudokuBoard::is_ambiguous2() const {
 		std::array<SudokuValue, 9> order = value_range;
 		mk::Random::shuffle(order.begin(), order.end());
 
@@ -187,23 +191,24 @@ namespace sudoku {
 		for (SudokuValue column: value_range) {
 			for (SudokuValue row: value_range) {
 				if (!operator()(column, row).main_digit.has_value()) {
-					// We do the backtracking from here.
 					bool found = false;
 					for (SudokuValue next_value: order) {
 						looped++;
 						if (can_place_digit(column, row, next_value)) {
 							cpy(column, row).main_digit = next_value;
-							if (cpy.is_ambiguous()) return true;
-							if (cpy.can_fill()) {
-								if (found) return true;
+
+							auto [amb, filled] = cpy.is_ambiguous2();
+							if (amb) return { true, filled };
+							if (filled) {
+								if (found) return { true, true };
 								found = true;
 							}
 						}
 					}
-					return false;
+					return { false, found };
 				}
 			}
 		}
-		return false;
+		return { false, true };
 	}
 }

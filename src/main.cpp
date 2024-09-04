@@ -48,16 +48,16 @@ public:
 		for (auto&& note_digit: note_digits) note_digit->hide();
 	}
 
-	void setNote(sudoku::SudokuValue value, bool show) {
+	void setNote(sudoku::SudokuValue digit, bool show) {
 		if (show)
-			note_digits[value() - 1]->show();
+			note_digits[digit() - 1]->show();
 		else
-			note_digits[value() - 1]->hide();
+			note_digits[digit() - 1]->hide();
 	}
 
 	void clear() {
 		main_digit->hide();
-		for (int i = 1; i <= 9; i++) setNote(i, false);
+		for (sudoku::SudokuValue digit: sudoku::value_range) setNote(digit, false);
 	}
 
 private:
@@ -121,8 +121,8 @@ public:
 			sprite.setColor(line_color);
 		}
 
-		for (auto col: sudoku::value_range) {
-			for (auto row: sudoku::value_range) {
+		for (sudoku::SudokuValue col: sudoku::value_range) {
+			for (sudoku::SudokuValue row: sudoku::value_range) {
 				auto&& text_color = (row() + col()) % 2 ? even_color : odd_color;
 				label_tiles[col()][row()]
 					= addChild<SudokuTileEntity>(game, col(), row(), sprite_size, text_color);
@@ -155,7 +155,9 @@ private:
 
 class SudokuScene: public mk::WorldEntity {
 public:
-	explicit SudokuScene(sudoku::SudokuGame::Difficulty difficulty = sudoku::SudokuGame::Difficulty::EASY):
+	explicit SudokuScene(
+		sudoku::SudokuGame::Difficulty difficulty = sudoku::SudokuGame::Difficulty::EXPERT
+	):
 		  sudoku(difficulty) {}
 
 	void onReady(mk::Game& game) override {
@@ -166,6 +168,10 @@ public:
 	void handleEvent(mk::Game& game, const sf::Event& event) override {
 		if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R)
 			game.replaceTopScene(std::make_unique<SudokuScene>());
+		if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
+			sudoku.fill();
+			board->load(sudoku.getBoard());
+		}
 	}
 
 private:
@@ -196,5 +202,6 @@ int main() {
 	mk::Game game = mk::Game("settings.json");
 	game.getDefaultFont()->setSmooth(false);
 	game.addScene(std::make_unique<SudokuScene>());
+	std::cout << "Looped: " << sudoku::getLooped() << "\n";
 	game.run();
 }
