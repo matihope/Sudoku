@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "Math/Vector2.hpp"
 
 namespace mk {
 	namespace Debug {
@@ -18,18 +19,17 @@ namespace mk {
 		sf::Color m_outline_color = sf::Color(200.f, 100.f, 125.f, 175.f);
 		sf::Color m_fill_color    = sf::Color(50.f, 175.f, 255.f, 100.f);
 
-		WorldEntity *m_parent;
+		WorldEntity* m_parent;
 
 	public:
-		explicit CollisionComponent(WorldEntity *parent);
-		CollisionComponent(const CollisionComponent &c) = default;
+		explicit CollisionComponent(WorldEntity* parent);
+		CollisionComponent(const CollisionComponent& c) = default;
 
-		~CollisionComponent() override                         = default;
-		virtual bool contains(const sf::Vector2f &point) const = 0;
+		~CollisionComponent() override                           = default;
+		virtual bool contains(const Math::Vector2f& point) const = 0;
 
 		bool shouldDraw() const;
 		void setDraw(bool draw);
-		void draw(sf::RenderTarget &target, sf::RenderStates states)
-			const override;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	};
 }  // namespace mk

@@ -7,8 +7,16 @@ namespace mk::Math {
 
 	template<typename T>
 	requires std::is_arithmetic_v<T> struct Vector2 {
+		Vector2() = default;
+
 		template<typename K1, typename K2>
 		Vector2(K1 x, K2 y): x(x), y(y) {}
+
+		/**
+		 * @brief This is a weird constructor and it's useful if we want to cast from other types.
+		 */
+		template<typename K>
+		explicit Vector2(K obj): x(obj.x), y(obj.y) {}
 
 		T x = 0;
 		T y = 0;
@@ -85,7 +93,9 @@ namespace mk::Math {
 			return { x / rhs, y / rhs };
 		}
 
-		T length() const { return std::sqrt(x * x + y * y); }
+		T length() const { return std::sqrt(length_squared()); }
+
+		T length_squared() const { return x * x + y * y; }
 
 		template<class X>
 		Vector2<X> type() const {

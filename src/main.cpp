@@ -146,13 +146,16 @@ public:
 	void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override {}
 
 private:
-	mk::SpriteBatch*                                                  tiles = nullptr;
-	mk::SpriteBatch*                                                  lines = nullptr;
-	std::array<std::array<SudokuTileEntity*, BOARD_SIZE>, BOARD_SIZE> label_tiles{};
+	mk::SpriteBatch*                                                          tiles = nullptr;
+	mk::SpriteBatch*                                                          lines = nullptr;
+	std::array<std::array<SudokuTileEntity*, BOARD_SIZE + 1>, BOARD_SIZE + 1> label_tiles{};
 };
 
 class SudokuScene: public mk::WorldEntity {
 public:
+	explicit SudokuScene(sudoku::SudokuGame::Difficulty difficulty = sudoku::SudokuGame::Difficulty::NONE):
+		  sudoku(difficulty) {}
+
 	void onReady(mk::Game& game) override {
 		board = addChild<SudokuBoardEntity>(game);
 		board->load(sudoku.getBoard());

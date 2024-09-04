@@ -17,7 +17,7 @@ namespace mk {
 	void Clickable::update(Game& game, float dt) {
 		if (!m_collision_shape) return;
 		if (!game.isWindowActive()) return;
-		sf::Vector2f mousePos = game.getMousePos();
+		Math::Vector2f mousePos = game.getMousePos();
 		m_is_held             = false;
 		m_is_pressed          = false;
 

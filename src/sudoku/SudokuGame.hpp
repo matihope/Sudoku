@@ -2,6 +2,7 @@
 #include <vector>
 #include <optional>
 #include <cassert>
+#include "Random/Random.hpp"
 
 namespace sudoku {
 	class SudokuValue {
@@ -39,15 +40,9 @@ namespace sudoku {
 	struct SudokuBoard;
 
 	struct SudokuSquare {
-		SudokuSquare();
 		std::optional<SudokuValue> main_digit{};
 		std::array<bool, 10>       note_digits{};
 		bool                       is_initial{};
-
-	private:
-		friend SudokuBoard;
-		std::array<bool, 10> possible_moves{};  // 0 for convenience
-		uint8_t              possible_move_count = 9;
 	};
 
 	class SudokuBoard {
@@ -73,18 +68,26 @@ namespace sudoku {
 		 * @brief A function that helps to iterate over all squares in a 3x3 square,
 		 * that should contain unique digits. This returns column or row numbers.
 		 */
-		static std::pair<SudokuValue, SudokuValue>   getColOrRowRangeForValue(SudokuValue value);
+		static std::array<SudokuValue, 3>            getColOrRowRangeForValue(SudokuValue value);
 		std::array<std::array<SudokuSquare, 10>, 10> board{};
 
-		bool fill(SudokuValue column, SudokuValue row, SudokuValue value);
+		bool fill(
+			SudokuValue column = 1,
+			SudokuValue row    = 1,
+			SudokuValue value  = mk::Random::getInt(1, 9),
+			int         depth  = 0
+		);
 	};
 
 	class SudokuGame {
 	public:
-		SudokuGame();
+		enum class Difficulty { NONE, EASY };
+
+		SudokuGame(Difficulty difficulty);
 
 		[[nodiscard]]
 		const SudokuBoard& getBoard() const;
+
 
 	private:
 		std::vector<SudokuBoard> history;

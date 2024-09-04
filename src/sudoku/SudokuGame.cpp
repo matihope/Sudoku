@@ -4,9 +4,13 @@
 #include <iostream>
 
 namespace sudoku {
-	SudokuGame::SudokuGame() {
+	SudokuGame::SudokuGame(SudokuGame::Difficulty difficulty) {
 		history.emplace_back();
 		history.back().fill_random(0);
+		if (difficulty == Difficulty::EASY) {
+			// delete 38 fields
+			// check if unique
+		}
 	}
 
 	const SudokuBoard& SudokuGame::getBoard() const { return history.back(); }
@@ -17,99 +21,37 @@ namespace sudoku {
 			mk::Random::initSeed(*seed);
 		else
 			mk::Random::initRandom();
-		// Fill the board
-		for (SudokuValue value: value_range) {
-			for (SudokuValue _: value_range) {
-				while (!place_digit(mk::Random::getInt(1, 9), mk::Random::getInt(1, 9), value));
-				std::cout << *this << '\n';
-			}
-		}
+		fill();
 	}
 
 	bool SudokuBoard::place_digit(SudokuValue column, SudokuValue row, SudokuValue value) {
 		if (!can_place_digit(column, row, value)) return false;
-
-		// Set columns
-		for (SudokuValue check_col: value_range) {
-			auto&& sq                  = operator()(check_col, row);
-			sq.possible_moves[value()] = false;
-			sq.possible_move_count--;
-		}
-		// Set rows
-		for (SudokuValue check_row: value_range) {
-			auto&& sq                  = operator()(column, check_row);
-			sq.possible_moves[value()] = false;
-			sq.possible_move_count--;
-		}
-
-		// Set 3x3 square
-		auto [row_begin, row_end] = getColOrRowRangeForValue(row);
-		auto [col_begin, col_end] = getColOrRowRangeForValue(column);
-		for (SudokuValue check_col = col_begin; check_col <= col_end; ++check_col) {
-			for (SudokuValue check_row = row_begin; check_row <= row_end; ++check_row) {
-				if (check_col != column && check_row != row) {
-					operator()(check_col, check_row).possible_moves[value()] = false;
-					operator()(check_col, check_row).possible_move_count--;
-				}
-			}
-		}
-
-		// Set the value
-		auto&& me     = operator()(column, row);
-		me.main_digit = value;
-		me.possible_moves.fill(false);
-		me.possible_move_count = 0;
-
+		operator()(column, row).main_digit = value;
 		return true;
 	}
 
 	bool SudokuBoard::can_place_digit(SudokuValue column, SudokuValue row, SudokuValue value) {
-		auto&& me = operator()(column, row);
-		if (me.main_digit.has_value()) return false;
-
-		// Check me
-		if (!me.possible_moves[value()]) return false;
+		if (operator()(column, row).main_digit.has_value()) return false;
 
 		// Check columns
-		for (SudokuValue check_col: value_range) {
-			if (check_col != column) {
-				auto&& sq = operator()(check_col, row);
-				if (!sq.main_digit.has_value() && sq.possible_moves[value()]
-				    && sq.possible_move_count <= 1)
-					return false;
-			}
-		}
+		for (SudokuValue check_col: value_range)
+			if (operator()(check_col, row).main_digit == value) return false;
+
 		// Check rows
-		for (SudokuValue check_row: value_range) {
-			if (check_row != row) {
-				auto&& sq = operator()(column, check_row);
-				if (!sq.main_digit.has_value() && sq.possible_moves[value()]
-				    && sq.possible_move_count <= 1)
-					return false;
-			}
-		}
+		for (SudokuValue check_row: value_range)
+			if (operator()(column, check_row).main_digit == value) return false;
 
 		// Check 3x3 square
-		auto [row_begin, row_end] = getColOrRowRangeForValue(row);
-		auto [col_begin, col_end] = getColOrRowRangeForValue(column);
-		for (SudokuValue check_col = col_begin; check_col <= col_end; ++check_col) {
-			for (SudokuValue check_row = row_begin; check_row <= row_end; ++check_row) {
-				// && not || because the other were already checked
-				if (check_row != row && check_col != column) {
-					auto&& sq = operator()(check_col, check_row);
-					if (!sq.main_digit.has_value() && sq.possible_moves[value()]
-					    && sq.possible_move_count <= 1)
-						return false;
-				}
-			}
-		}
+		for (SudokuValue check_col: getColOrRowRangeForValue(column))
+			for (SudokuValue check_row: getColOrRowRangeForValue(row))
+				if (operator()(check_col, check_row).main_digit == value) return false;
 		return true;
 	}
 
-	std::pair<SudokuValue, SudokuValue> SudokuBoard::getColOrRowRangeForValue(SudokuValue value) {
-		if (1 <= value && value <= 3) return { 1, 3 };
-		if (4 <= value && value <= 6) return { 4, 6 };
-		return { 7, 9 };
+	std::array<SudokuValue, 3> SudokuBoard::getColOrRowRangeForValue(SudokuValue value) {
+		if (1 <= value && value <= 3) return { 1, 2, 3 };
+		if (4 <= value && value <= 6) return { 4, 5, 6 };
+		return { 7, 8, 9 };
 	}
 
 	SudokuSquare& SudokuBoard::operator()(SudokuValue column, SudokuValue row) {
@@ -149,6 +91,7 @@ namespace sudoku {
 
 	SudokuValue& SudokuValue::operator++() {
 		value += 1;
+		assert(value <= 9);
 		return *this;
 	}
 
@@ -159,14 +102,38 @@ namespace sudoku {
 		return out;
 	}
 
-	SudokuSquare::SudokuSquare() { possible_moves.fill(true); }
+	bool SudokuBoard::fill(SudokuValue column, SudokuValue row, SudokuValue value, int depth) {
+		assert(depth <= 80);
+		if (operator()(column, value).main_digit != value && !place_digit(column, row, value))
+			return false;
+		std::cerr << *this << '\n';
 
-	bool SudokuBoard::fill(SudokuValue column, SudokuValue row, SudokuValue value) {
-		// operator()(column, row).
-		// std::array<SudokuValue, 9> order = value_range;
-		// mk::Random::shuffle(order.begin(), order.end());
-		// for (auto& value: order) {
+		if (column == 9 && row == 9) return true;
 
-		// }
+		std::array<SudokuValue, 9> order = value_range;
+		mk::Random::shuffle(order.begin(), order.end());
+
+		SudokuValue next_column = column;
+		SudokuValue next_row    = row;
+		if (row == 9) {
+			next_row = 1;
+			++next_column;
+		} else {
+			++next_row;
+		}
+
+		SudokuBoard cpy  = *this;
+		int         test = 1;
+		for (auto next_value: order) {
+			std::cerr << "Trying at: " << depth << " value " << test++ << "/" << "9 - "
+					  << next_value << "...\n";
+			if (cpy.fill(next_column, next_row, next_value, depth + 1)) {
+				*this = cpy;
+				return true;
+			} else {
+				cpy(next_column, next_row).main_digit.reset();
+			}
+		}
+		return false;
 	}
 }

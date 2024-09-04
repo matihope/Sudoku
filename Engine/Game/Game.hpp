@@ -4,6 +4,7 @@
 #include "JsonBridge/JsonBridge.hpp"
 #include "Updatable/Updatable.hpp"
 #include "WorldEntity/WorldEntity.hpp"
+#include "Math/Vector2.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <memory>
@@ -29,7 +30,7 @@ namespace mk {
 		sf::View                                 m_view;
 		sf::Font*                                m_default_font;
 		GUI::Label                               m_fps_label;
-		sf::Vector2f                             m_mouse_pos;
+		Math::Vector2f                           m_mouse_pos;
 		sf::Image                                icon;
 
 		void                                     updateViewportSize();
@@ -48,8 +49,8 @@ namespace mk {
 
 		void              setPrintFPS(const bool& printFPS);
 		bool              isRunning() const;
-		sf::Vector2u      getWindowSize();
-		sf::Vector2u      getViewportSize();
+		Math::Vector2u    getWindowSize();
+		Math::Vector2u    getViewportSize();
 		void              setViewportSize(sf::Vector2f newSize);
 		void              setViewportSize(sf::Vector2u newSize);
 		sf::RenderWindow& getRenderWindow();
@@ -63,7 +64,7 @@ namespace mk {
 		 */
 		void popScene();
 
-		sf::Vector2f    getMousePos();
+		Math::Vector2f  getMousePos();
 		const sf::View* getView();
 		void            setCameraCenterAt(const sf::Vector2f& pos);
 		void            setCursor(sf::Cursor::Type type);

@@ -9,8 +9,9 @@
 #include <iterator>
 
 namespace {
-	sf::Vector2f scaleToFit(const sf::Vector2f viewSize, const sf::Vector2u windowSize) {
-		sf::Vector2f scale;
+	mk::Math::Vector2f
+		scaleToFit(const mk::Math::Vector2f viewSize, const mk::Math::Vector2u windowSize) {
+		mk::Math::Vector2f scale;
 		scale.x = viewSize.x / (float) windowSize.x;
 		scale.y = viewSize.y / (float) windowSize.y;
 		if (scale.x < scale.y) {
@@ -51,7 +52,9 @@ namespace mk {
 
 	void Game::update() {
 		m_delta_time = m_clock.restart().asSeconds();
-		m_mouse_pos = getRenderWindow().mapPixelToCoords(sf::Mouse::getPosition(getRenderWindow()));
+		m_mouse_pos  = Math::Vector2f(
+            getRenderWindow().mapPixelToCoords(sf::Mouse::getPosition(getRenderWindow()))
+        );
 
 		while (!m_safe_scene_delete_queue.empty()) m_safe_scene_delete_queue.pop();
 
@@ -86,9 +89,8 @@ namespace mk {
 	}
 
 	void Game::popScene() {
-		auto topScene = std::move(m_scenes_stack.top());
+		m_safe_scene_delete_queue.push(std::move(m_scenes_stack.top()));
 		m_scenes_stack.pop();
-		m_safe_scene_delete_queue.push(std::move(topScene));
 	}
 
 	void Game::replaceTopScene(std::unique_ptr<WorldEntity> newScene) {
@@ -132,21 +134,23 @@ namespace mk {
 
 	void Game::setPrintFPS(const bool& printFPS) { m_enable_print_fps = printFPS; }
 
-	sf::Vector2u Game::getWindowSize() { return m_window.getSize(); }
+	Math::Vector2u Game::getWindowSize() { return Math::Vector2u(m_window.getSize()); }
 
-	sf::Vector2u Game::getViewportSize() { return (sf::Vector2u) m_view.getSize(); }
+	Math::Vector2u Game::getViewportSize() { return Math::Vector2u(m_view.getSize()); }
 
 	sf::RenderWindow& Game::getRenderWindow() { return m_window; }
 
 	void Game::updateViewportSize() {
-		sf::Vector2f viewportScale = scaleToFit(m_view.getSize(), getWindowSize());
+		Math::Vector2f viewportScale
+			= scaleToFit(Math::Vector2f(m_view.getSize()), getWindowSize());
 		m_view.setViewport(sf::FloatRect(
-			sf::Vector2f(0.5f - viewportScale.x / 2, 0.5f - viewportScale.y / 2), viewportScale
+			sf::Vector2f(0.5f - viewportScale.x / 2, 0.5f - viewportScale.y / 2),
+			viewportScale.as<sf::Vector2f>()
 		));
 		m_window.setView(m_view);
 	}
 
-	sf::Vector2f Game::getMousePos() { return m_mouse_pos; }
+	Math::Vector2f Game::getMousePos() { return m_mouse_pos; }
 
 	const sf::View* Game::getView() { return &m_view; }
 
