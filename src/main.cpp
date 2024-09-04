@@ -190,6 +190,6 @@ private:
 int main() {
 	mk::Game game = mk::Game("settings.json");
 	game.getDefaultFont()->setSmooth(false);
-	game.addScene(std::make_unique<Menu>());
+	game.addScene(std::make_unique<SudokuScene>());
 	game.run();
 }
