@@ -55,7 +55,7 @@ namespace sudoku {
 		 */
 		bool place_digit(SudokuValue column, SudokuValue row, SudokuValue value);
 
-		bool can_place_digit(SudokuValue column, SudokuValue row, SudokuValue value);
+		bool can_place_digit(SudokuValue column, SudokuValue row, SudokuValue value) const;
 
 		SudokuSquare& operator()(SudokuValue column, SudokuValue row);
 
@@ -63,6 +63,10 @@ namespace sudoku {
 
 		friend std::ostream& operator<<(std::ostream& out, const SudokuBoard& board);
 
+		[[nodiscard]]
+		bool is_ambiguous() const;
+
+		bool fill(int depth = 0);
 	private:
 		/**
 		 * @brief A function that helps to iterate over all squares in a 3x3 square,
@@ -70,13 +74,6 @@ namespace sudoku {
 		 */
 		static std::array<SudokuValue, 3>            getColOrRowRangeForValue(SudokuValue value);
 		std::array<std::array<SudokuSquare, 10>, 10> board{};
-
-		bool fill(
-			SudokuValue column = 1,
-			SudokuValue row    = 1,
-			SudokuValue value  = mk::Random::getInt(1, 9),
-			int         depth  = 0
-		);
 	};
 
 	class SudokuGame {

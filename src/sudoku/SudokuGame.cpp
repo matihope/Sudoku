@@ -30,7 +30,8 @@ namespace sudoku {
 		return true;
 	}
 
-	bool SudokuBoard::can_place_digit(SudokuValue column, SudokuValue row, SudokuValue value) {
+	bool
+		SudokuBoard::can_place_digit(SudokuValue column, SudokuValue row, SudokuValue value) const {
 		if (operator()(column, row).main_digit.has_value()) return false;
 
 		// Check columns
@@ -71,7 +72,7 @@ namespace sudoku {
 				if (sq.main_digit.has_value())
 					out << sq.main_digit.value();
 				else
-					out << '0';
+					out << ' ';
 
 				if (col == 3 || col == 6 || col == 9)
 					out << '|';
@@ -102,38 +103,63 @@ namespace sudoku {
 		return out;
 	}
 
-	bool SudokuBoard::fill(SudokuValue column, SudokuValue row, SudokuValue value, int depth) {
-		assert(depth <= 80);
-		if (operator()(column, value).main_digit != value && !place_digit(column, row, value))
-			return false;
-		std::cerr << *this << '\n';
-
-		if (column == 9 && row == 9) return true;
+	bool SudokuBoard::fill(int depth) {
+		static int digit_tried = 0;
+		//		if (depth == 0) digit_tried = 0;
 
 		std::array<SudokuValue, 9> order = value_range;
 		mk::Random::shuffle(order.begin(), order.end());
 
-		SudokuValue next_column = column;
-		SudokuValue next_row    = row;
-		if (row == 9) {
-			next_row = 1;
-			++next_column;
-		} else {
-			++next_row;
+		SudokuBoard cpy = *this;
+		for (SudokuValue column: value_range) {
+			for (SudokuValue row: value_range) {
+				if (!operator()(column, row).main_digit.has_value()) {
+					// We do the backtracking from here.
+					int test = 1;
+					for (SudokuValue next_value: order) {
+						//						std::cerr << "Trying at: " << depth << " value " <<
+						// test++ << "/" << "9 - "
+						//								  << next_value << ", conducted test: " <<
+						//++digit_tried << '\n';
+						if (can_place_digit(column, row, next_value)) {
+							cpy(column, row).main_digit = next_value;
+							if (cpy.fill(depth + 1)) {
+								*this = cpy;
+								return true;
+							}
+						}
+					}
+					return false;
+				}
+			}
 		}
+		return true;
+	}
 
-		SudokuBoard cpy  = *this;
-		int         test = 1;
-		for (auto next_value: order) {
-			std::cerr << "Trying at: " << depth << " value " << test++ << "/" << "9 - "
-					  << next_value << "...\n";
-			if (cpy.fill(next_column, next_row, next_value, depth + 1)) {
-				*this = cpy;
-				return true;
-			} else {
-				cpy(next_column, next_row).main_digit.reset();
+	bool SudokuBoard::is_ambiguous() const {
+		std::array<SudokuValue, 9> order = value_range;
+		mk::Random::shuffle(order.begin(), order.end());
+
+		for (SudokuValue column: value_range) {
+			for (SudokuValue row: value_range) {
+				if (!operator()(column, row).main_digit.has_value()) {
+					// We do the backtracking from here.
+					bool found = false;
+					for (SudokuValue next_value: order) {
+						SudokuBoard cpy = *this;
+						if (cpy.place_digit(column, row, next_value)) {
+							if (cpy.fill()) {
+								if (found) return true;
+								found = true;
+							}
+							if (cpy.is_ambiguous()) return true;
+						}
+					}
+					return false;
+				}
 			}
 		}
 		return false;
 	}
+
 }

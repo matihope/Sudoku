@@ -4,6 +4,7 @@
 #include "SpriteBatch/SpriteBatch.hpp"
 #include "Math/Vector2.hpp"
 #include "sudoku/SudokuGame.hpp"
+#include <iostream>
 
 class SudokuTileEntity: public mk::WorldEntity {
 public:
@@ -191,8 +192,39 @@ private:
 };
 
 int main() {
-	mk::Game game = mk::Game("settings.json");
-	game.getDefaultFont()->setSmooth(false);
-	game.addScene(std::make_unique<SudokuScene>());
-	game.run();
+//	mk::Game game = mk::Game("settings.json");
+//	game.getDefaultFont()->setSmooth(false);
+//	game.addScene(std::make_unique<SudokuScene>());
+//	game.run();
+	sudoku::SudokuBoard board;
+
+	board.place_digit(1, 5, 2);
+	board.place_digit(2, 1, 5);
+	board.place_digit(2, 2, 6);
+	board.place_digit(2, 7, 7);
+	board.place_digit(3, 3, 2);
+	board.place_digit(3, 4, 8);
+	board.place_digit(3, 5, 6);
+	board.place_digit(3, 9, 9);
+	board.place_digit(4, 3, 5);
+	board.place_digit(4, 5, 4);
+	board.place_digit(4, 6, 9);
+	board.place_digit(4, 8, 3);
+	board.place_digit(4, 9, 1);
+	board.place_digit(5, 1, 7);
+	board.place_digit(5, 3, 4);
+	board.place_digit(5, 6, 2);
+	board.place_digit(5, 7, 8);
+	board.place_digit(6, 9, 7);
+	board.place_digit(7, 1, 9);
+	board.place_digit(7, 3, 6);
+	board.place_digit(7, 5, 3);
+	board.place_digit(7, 6, 5);
+	board.place_digit(9, 2, 7);
+	board.place_digit(9, 6, 1);
+	board.place_digit(9, 9, 2);
+	std::cout << board << '\n';
+	std::cout << "Is ambiguous: " << board.is_ambiguous() << '\n';
+	board.fill();
+	std::cout << board << '\n';
 }
