@@ -1,0 +1,20 @@
+{
+  "window": {
+    "width": 960,
+    "height": 720,
+    "title": "Sudoku by matihope",
+    "vsync": true
+  },
+  "viewport": {
+    "width": 960,
+    "height": 720
+  },
+  "debug": {
+    "printFPS": true,
+    "drawCollisionShapes": false
+  },
+  "engine": {
+    "physicsUpdateCallFreq": 60,
+    "fontPath": "Born2bSportyV2.ttf"
+  }
+}
