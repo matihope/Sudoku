@@ -13,7 +13,7 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif()
 
-# Custom target that is always executes.
+# Custom target that always executes.
 # Creates a symlink to assets inside the build directory.
 add_custom_target(create_asset_link ALL COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets)
 

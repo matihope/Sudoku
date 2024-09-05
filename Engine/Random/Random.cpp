@@ -10,7 +10,7 @@ namespace mk {
 		return instance;
 	}
 
-	void Random::initSeed(uint seed) {
+	void Random::initSeed(uint32_t seed) {
 		auto &me = Random::get();
 		me.generator.seed(seed);
 	}

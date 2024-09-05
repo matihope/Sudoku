@@ -5,7 +5,7 @@
 #include "Random/Random.hpp"
 
 namespace sudoku {
-	int getLooped();
+	uint32_t getLoopCounter();
 
 	class SudokuValue {
 	public:
@@ -49,14 +49,15 @@ namespace sudoku {
 
 	class SudokuBoard {
 	public:
-		void fill_random(std::optional<int> seed = {});
+		void fill_random(std::optional<uint32_t> seed = {});
 
 		/**
-		 * @brief Puts a value at column and row.
+		 * @brief Puts a value at column and row. Fails if it's an illegal move.
 		 * @return true on success, false on failure.
 		 */
 		bool place_digit(SudokuValue column, SudokuValue row, SudokuValue value);
 
+		[[nodiscard]]
 		bool can_place_digit(SudokuValue column, SudokuValue row, SudokuValue value) const;
 
 		SudokuSquare& operator()(SudokuValue column, SudokuValue row);
@@ -72,41 +73,38 @@ namespace sudoku {
 		bool fill(int depth = 0);
 
 		/**
-		 * @brief Checks if it's possible to solve the board.
-		 */
-		[[nodiscard]]
-		bool can_fill() const;
-
-		/**
 		 * @brief Checks is there is an only one way to solve this board.
 		 */
 		[[nodiscard]]
-		bool is_ambiguous() const;
+		bool isAmbiguous() const;
 
 
 	private:
-		std::pair<bool, bool> is_ambiguous2() const;
-		/**
-		 * @brief A function that helps to iterate over all squares in a 3x3 square,
-		 * that should contain unique digits. This returns column or row numbers.
-		 */
-		static std::array<SudokuValue, 3>            getColOrRowRangeForValue(SudokuValue value);
-		std::array<std::array<SudokuSquare, 10>, 10> board{};
+		struct IsAmbiguousResult {
+			bool is_ambiguous;
+			bool is_fillable;
+		};
+
+		[[nodiscard]]
+		IsAmbiguousResult isAmbiguousImpl() const;
+
+		std::array<SudokuSquare, 82> board{};
 	};
 
 	class SudokuGame {
 	public:
-		enum class Difficulty { NONE, EASY, EXPERT };
+		enum class Difficulty { EMPTY, NONE, EASY, NORMAL, HARD, EXPERT };
 
-		explicit SudokuGame(Difficulty difficulty);
+		explicit SudokuGame(Difficulty difficulty, std::optional<uint32_t> = {});
 
 		[[nodiscard]]
 		const SudokuBoard& getBoard() const;
 
 		void fill();
 
-
 	private:
 		std::vector<SudokuBoard> history;
+
+		SudokuBoard initial;
 	};
 }

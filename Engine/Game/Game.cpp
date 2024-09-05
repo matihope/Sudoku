@@ -29,7 +29,7 @@ namespace mk {
 	void Game::run() {
 		m_run = true;
 
-		if (!m_scenes_stack.empty()) m_scenes_stack.top()->ready(*this);
+		if (!m_scene_stack.empty()) m_scene_stack.top()->ready(*this);
 
 		while (isRunning()) {
 			pollEvents();
@@ -43,7 +43,7 @@ namespace mk {
 	void Game::draw() {
 		m_window.clear(sf::Color(21, 21, 21));
 
-		if (!m_scenes_stack.empty()) m_window.draw(*m_scenes_stack.top());
+		if (!m_scene_stack.empty()) m_window.draw(*m_scene_stack.top());
 
 		if (m_enable_print_fps) m_window.draw(m_fps_label);
 
@@ -58,13 +58,13 @@ namespace mk {
 
 		while (!m_safe_scene_delete_queue.empty()) m_safe_scene_delete_queue.pop();
 
-		if (!m_scenes_stack.empty()) {
+		if (!m_scene_stack.empty()) {
 			m_physics_update_counter += m_delta_time;
 			if (m_physics_update_counter >= m_physics_update_call_freq) {
-				m_scenes_stack.top()->physicsUpdate(*this, m_physics_update_call_freq);
+				m_scene_stack.top()->physicsUpdate(*this, m_physics_update_call_freq);
 				m_physics_update_counter -= m_physics_update_call_freq;
 			}
-			m_scenes_stack.top()->update(*this, m_delta_time);
+			m_scene_stack.top()->update(*this, m_delta_time);
 		}
 
 		recalculateAvgFps();
@@ -72,12 +72,11 @@ namespace mk {
 
 	void Game::recalculateAvgFps() {
 		if (m_enable_print_fps) {
-			m_fps_frame_count++;
+			++m_fps_frame_count;
 			m_fps_sum += m_delta_time;
 			if (m_fps_sum >= 1.f) {
-				int currentFps = (int) round(m_fps_frame_count / m_fps_sum);
-				m_fps_label.setText(std::to_string(currentFps));
-				m_fps_sum         = 0.0;
+				m_fps_label.setText(std::to_string(m_fps_frame_count));
+				m_fps_sum = 0.f;
 				m_fps_frame_count = 0;
 			}
 		}
@@ -85,12 +84,14 @@ namespace mk {
 
 	void Game::addScene(std::unique_ptr<WorldEntity> newScene) {
 		if (isRunning()) newScene->ready(*this);
-		m_scenes_stack.push(std::move(newScene));
+		m_scene_stack.push(std::move(newScene));
 	}
 
 	void Game::popScene() {
-		m_safe_scene_delete_queue.push(std::move(m_scenes_stack.top()));
-		m_scenes_stack.pop();
+		if(!m_scene_stack.empty()) {
+			m_safe_scene_delete_queue.push(std::move(m_scene_stack.top()));
+			m_scene_stack.pop();
+		}
 	}
 
 	void Game::replaceTopScene(std::unique_ptr<WorldEntity> newScene) {
@@ -101,7 +102,7 @@ namespace mk {
 	void Game::pollEvents() {
 		sf::Event event{};
 		while (m_window.pollEvent(event)) {
-			if (!m_scenes_stack.empty()) m_scenes_stack.top()->handleEvent(*this, event);
+			if (!m_scene_stack.empty()) m_scene_stack.top()->handleEvent(*this, event);
 
 			switch (event.type) {
 			case sf::Event::Closed:
@@ -111,7 +112,7 @@ namespace mk {
 				switch (event.key.code) {
 				case sf::Keyboard::Tilde:
 					popScene();
-					if (m_scenes_stack.empty()) stop();
+					if (m_scene_stack.empty()) stop();
 					break;
 				default:
 					// skip any other case

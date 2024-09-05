@@ -4,6 +4,7 @@
 #include "SpriteBatch/SpriteBatch.hpp"
 #include "Math/Vector2.hpp"
 #include "sudoku/SudokuGame.hpp"
+
 #include <iostream>
 
 class SudokuTileEntity: public mk::WorldEntity {
@@ -71,61 +72,35 @@ class SudokuBoardEntity: public mk::WorldEntity {
 	static constexpr int BOARD_SIZE   = 9;
 	static constexpr int SQUARE_COUNT = 3;
 
+	sf::Color even_color{}, odd_color{}, line_color{};
+
 public:
+	SudokuBoardEntity() {
+		mk::JsonBridge colors("colors.json");
+
+		using sf::Color;
+		using std::stoul;
+		using std::string;
+		even_color = Color(stoul(string(colors["board"]["even"]), nullptr, 16) * 256 + 0xFF);
+		odd_color  = Color(stoul(string(colors["board"]["odd"]), nullptr, 16) * 256 + 0xFF);
+		line_color = Color(stoul(string(colors["board"]["line"]), nullptr, 16) * 256 + 0xFF);
+	}
+
 	void onReady(mk::Game& game) override {
 		tiles = addChild<mk::SpriteBatch>(game);
 		tiles->setSize(81);
 
-		mk::JsonBridge colors("colors.json");
-
-		using sf::Color;
-		using std::min;
-		using std::stoul;
-		using std::string;
-		auto even_color = Color(stoul(string(colors["board"]["even"]), nullptr, 16) * 256 + 0xFF);
-		auto odd_color  = Color(stoul(string(colors["board"]["odd"]), nullptr, 16) * 256 + 0xFF);
-		auto line_color = Color(stoul(string(colors["board"]["line"]), nullptr, 16) * 256 + 0xFF);
-
 		auto [view_width, view_height] = game.getViewportSize();
-		float sprite_size              = (float) min(view_width, view_height) / BOARD_SIZE;
+		float tile_size                = (float) std::min(view_width, view_height) / BOARD_SIZE;
 
-		for (int x = 0; x < BOARD_SIZE; x++) {
-			for (int y = 0; y < BOARD_SIZE; y++) {
-				auto&& sprite = tiles->getSprite(y * BOARD_SIZE + x);
-				sprite.setPosition((mk::Math::Vector2f(x, y) * sprite_size).as<sf::Vector2f>());
-				sprite.setSize({ sprite_size, sprite_size });
-				if ((x + y) % 2)
-					sprite.setColor(odd_color);
-				else
-					sprite.setColor(even_color);
-			}
-		}
-
-		lines = addChild<mk::SpriteBatch>(game);
-		lines->setSize(4);
-		float line_thickness = 4.f;
-		float line_length    = sprite_size * BOARD_SIZE;
-		for (int i = 0; i < 4; i++) {
-			auto&& sprite = lines->getSprite(i);
-			auto   pos    = sprite_size * SQUARE_COUNT;
-			if (i % 2) pos = pos * 2;
-			if (i < 2) {
-				// Vertical
-				sprite.setPosition({ pos - line_thickness / 2, 0. });
-				sprite.setSize({ line_thickness, line_length });
-			} else {
-				// Horizontal
-				sprite.setPosition({ 0., pos - line_thickness / 2 });
-				sprite.setSize({ line_length, line_thickness });
-			}
-			sprite.setColor(line_color);
-		}
+		spawnTiles(game, tile_size);
+		spawnLines(game, tile_size);
 
 		for (sudoku::SudokuValue col: sudoku::value_range) {
 			for (sudoku::SudokuValue row: sudoku::value_range) {
 				auto&& text_color = (row() + col()) % 2 ? even_color : odd_color;
 				label_tiles[col()][row()]
-					= addChild<SudokuTileEntity>(game, col(), row(), sprite_size, text_color);
+					= addChild<SudokuTileEntity>(game, col(), row(), tile_size, text_color);
 				label_tiles[col()][row()]->setMainDigit(row());
 			}
 		}
@@ -145,9 +120,43 @@ public:
 		}
 	}
 
-	void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override {}
-
 private:
+	void spawnTiles(mk::Game& game, float tile_size) {
+		for (int x = 0; x < BOARD_SIZE; x++) {
+			for (int y = 0; y < BOARD_SIZE; y++) {
+				auto&& sprite = tiles->getSprite(y * BOARD_SIZE + x);
+				sprite.setPosition((mk::Math::Vector2f(x, y) * tile_size).as<sf::Vector2f>());
+				sprite.setSize({ tile_size, tile_size });
+				if ((x + y) % 2)
+					sprite.setColor(odd_color);
+				else
+					sprite.setColor(even_color);
+			}
+		}
+	}
+
+	void spawnLines(mk::Game& game, float tile_size) {
+		lines = addChild<mk::SpriteBatch>(game);
+		lines->setSize(4);
+		float line_thickness = 4.f;
+		float line_length    = tile_size * BOARD_SIZE;
+		for (int i = 0; i < 4; i++) {
+			auto&& sprite = lines->getSprite(i);
+			auto   pos    = tile_size * SQUARE_COUNT;
+			if (i % 2) pos = pos * 2;
+			if (i < 2) {
+				// Vertical
+				sprite.setPosition({ pos - line_thickness / 2, 0. });
+				sprite.setSize({ line_thickness, line_length });
+			} else {
+				// Horizontal
+				sprite.setPosition({ 0., pos - line_thickness / 2 });
+				sprite.setSize({ line_length, line_thickness });
+			}
+			sprite.setColor(line_color);
+		}
+	}
+
 	mk::SpriteBatch*                                                          tiles = nullptr;
 	mk::SpriteBatch*                                                          lines = nullptr;
 	std::array<std::array<SudokuTileEntity*, BOARD_SIZE + 1>, BOARD_SIZE + 1> label_tiles{};
@@ -156,7 +165,7 @@ private:
 class SudokuScene: public mk::WorldEntity {
 public:
 	explicit SudokuScene(
-		sudoku::SudokuGame::Difficulty difficulty = sudoku::SudokuGame::Difficulty::EXPERT
+		sudoku::SudokuGame::Difficulty difficulty = sudoku::SudokuGame::Difficulty::NONE
 	):
 		  sudoku(difficulty) {}
 
@@ -175,13 +184,21 @@ public:
 	}
 
 private:
+	void spawnButtons() {}
+
 	SudokuBoardEntity* board = nullptr;
 	sudoku::SudokuGame sudoku;
+
+	//	mk::GUI::Button*
 };
 
 class Menu: public mk::WorldEntity {
 public:
 	void onReady(mk::Game& game) override {
+		std::array<std::pair<std::string, sudoku::SudokuGame::Difficulty>, 2> button_things{
+			{ "Easy", sudoku::SudokuGame::Difficulty::EASY },
+			{ "Normal", sudoku::SudokuGame::Difficulty::NORMAL }
+		};
 		auto font = &mk::ResourceManager::get().getFont("Born2bSportyV2.ttf");
 		button    = addChild<mk::GUI::Button>(game, font, "Play");
 		button->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::CENTER);
@@ -202,6 +219,6 @@ int main() {
 	mk::Game game = mk::Game("settings.json");
 	game.getDefaultFont()->setSmooth(false);
 	game.addScene(std::make_unique<SudokuScene>());
-	std::cout << "Looped: " << sudoku::getLooped() << "\n";
+	std::cout << "Looped: " << sudoku::getLoopCounter() << "\n";
 	game.run();
 }

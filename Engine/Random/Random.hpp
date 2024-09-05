@@ -6,8 +6,6 @@
 
 namespace mk {
 
-	typedef unsigned int uint;
-
 	class Random {
 		Random() = default;
 		static Random& get();
@@ -20,7 +18,7 @@ namespace mk {
 		Random(const Random&)         = delete;
 		void operator=(const Random&) = delete;
 
-		static void initSeed(uint seed);
+		static void initSeed(uint32_t seed);
 		static void initRandom();
 
 		template<class T>
