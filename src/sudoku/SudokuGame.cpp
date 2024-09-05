@@ -1,4 +1,3 @@
-
 #include "SudokuGame.hpp"
 #include "Random/Random.hpp"
 #include <iostream>
@@ -137,10 +136,7 @@ namespace sudoku {
 
 	uint32_t getLoopCounter() { return loop_counter; }
 
-	bool SudokuBoard::fill(int depth) {
-		static int digit_tried = 0;
-		if (depth == 0) digit_tried = 0;
-
+	bool SudokuBoard::fill() {
 		std::array<SudokuValue, 9> order = value_range;
 		mk::Random::shuffle(order.begin(), order.end());
 
@@ -151,12 +147,9 @@ namespace sudoku {
 					// We do the backtracking from here.
 					int test = 1;
 					for (SudokuValue next_value: order) {
-						// std::cerr << "Trying at: " << depth << " value " << test++ << "/" << "9 - "
-						// 		  << next_value << ", conducted test: " << ++digit_tried << '\n';
-
 						if (can_place_digit(column, row, next_value)) {
 							cpy(column, row).main_digit = next_value;
-							if (cpy.fill(depth + 1)) {
+							if (cpy.fill()) {
 								*this = cpy;
 								return true;
 							}

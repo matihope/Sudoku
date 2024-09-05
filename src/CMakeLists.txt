@@ -1,5 +1,7 @@
 add_executable(${PROJECT_NAME} main.cpp
-        sudoku/SudokuGame.cpp
-        sudoku/SudokuGame.hpp
+        entities/SudokuTileEntity.hpp
+        entities/SudokuBoardEntity.hpp
+        entities/SudokuScene.hpp
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
+add_subdirectory(sudoku)
+target_link_libraries(${PROJECT_NAME} PRIVATE Engine SudokuLogic)

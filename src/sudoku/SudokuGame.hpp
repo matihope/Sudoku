@@ -2,7 +2,6 @@
 #include <vector>
 #include <optional>
 #include <cassert>
-#include "Random/Random.hpp"
 
 namespace sudoku {
 	uint32_t getLoopCounter();
@@ -70,7 +69,7 @@ namespace sudoku {
 		 * @brief Tries to fills the board. If fails to fill the board state is incorrect.
 		 * @return True if filled successfully, false otherwise.
 		 */
-		bool fill(int depth = 0);
+		bool fill();
 
 		/**
 		 * @brief Checks is there is an only one way to solve this board.
