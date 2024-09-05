@@ -165,7 +165,7 @@ private:
 class SudokuScene: public mk::WorldEntity {
 public:
 	explicit SudokuScene(
-		sudoku::SudokuGame::Difficulty difficulty = sudoku::SudokuGame::Difficulty::NONE
+		sudoku::SudokuGame::Difficulty difficulty = sudoku::SudokuGame::Difficulty::NORMAL
 	):
 		  sudoku(difficulty) {}
 
@@ -195,10 +195,11 @@ private:
 class Menu: public mk::WorldEntity {
 public:
 	void onReady(mk::Game& game) override {
-		std::array<std::pair<std::string, sudoku::SudokuGame::Difficulty>, 2> button_things{
-			{ "Easy", sudoku::SudokuGame::Difficulty::EASY },
-			{ "Normal", sudoku::SudokuGame::Difficulty::NORMAL }
-		};
+		// std::array<std::pair<std::string, sudoku::SudokuGame::Difficulty>, 2> button_things{
+		// 	{ "Easy", sudoku::SudokuGame::Difficulty::EASY },
+		// 	{ "Normal", sudoku::SudokuGame::Difficulty::NORMAL }
+		// };
+
 		auto font = &mk::ResourceManager::get().getFont("Born2bSportyV2.ttf");
 		button    = addChild<mk::GUI::Button>(game, font, "Play");
 		button->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::CENTER);

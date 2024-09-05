@@ -151,8 +151,8 @@ namespace sudoku {
 					// We do the backtracking from here.
 					int test = 1;
 					for (SudokuValue next_value: order) {
-						std::cerr << "Trying at: " << depth << " value " << test++ << "/" << "9 - "
-								  << next_value << ", conducted test: " << ++digit_tried << '\n';
+						// std::cerr << "Trying at: " << depth << " value " << test++ << "/" << "9 - "
+						// 		  << next_value << ", conducted test: " << ++digit_tried << '\n';
 
 						if (can_place_digit(column, row, next_value)) {
 							cpy(column, row).main_digit = next_value;
