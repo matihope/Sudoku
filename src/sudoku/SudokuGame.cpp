@@ -39,6 +39,7 @@ namespace sudoku {
 					SudokuValue row    = mk::Random::getInt(1, 9);
 					auto&&      sq     = board(column, row);
 					if (sq.main_digit.has_value()) {
+						sq.main_digit.reset();
 						if (board.isAmbiguous())
 							sq.main_digit = initial(column, row).main_digit;
 						else
@@ -46,6 +47,8 @@ namespace sudoku {
 					}
 				}
 			}
+		} else {
+			history.push_back(initial);
 		}
 	}
 
