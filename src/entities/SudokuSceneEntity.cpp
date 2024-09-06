@@ -1,4 +1,4 @@
-#include "SudokuScene.hpp"
+#include "SudokuSceneEntity.hpp"
 
 SudokuScene::SudokuScene(sudoku::SudokuGame::Difficulty difficulty): sudoku(difficulty) {}
 

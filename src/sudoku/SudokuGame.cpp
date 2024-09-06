@@ -25,21 +25,21 @@ namespace sudoku {
 			// Blank some squares to make it fun
 			history.push_back(initial);
 
-			int remaining = 81;
-			if (difficulty == Difficulty::EASY) remaining = 38;
-			if (difficulty == Difficulty::NORMAL) remaining = 35;
-			if (difficulty == Difficulty::HARD) remaining = 32;
-			if (difficulty == Difficulty::EXPERT) remaining = 28;
+			int to_remain = 9 * 9;
+			if (difficulty == Difficulty::EASY) to_remain = 38;
+			if (difficulty == Difficulty::NORMAL) to_remain = 35;
+			if (difficulty == Difficulty::HARD) to_remain = 32;
+			if (difficulty == Difficulty::EXPERT) to_remain = 28;
 
-			for (int i = 0; i < 81 - remaining; i++) {
+			auto&& board = history.back();
+			for (int remaining = 9 * 9; remaining > to_remain; --remaining) {
 				while (true) {
 					// Try to remove a value, and if the board is ambiguous then undo.
 					SudokuValue column = mk::Random::getInt(1, 9);
 					SudokuValue row    = mk::Random::getInt(1, 9);
-					auto&&      sq     = history.back()(column, row);
+					auto&&      sq     = board(column, row);
 					if (sq.main_digit.has_value()) {
-						sq.main_digit.reset();
-						if (history.back().isAmbiguous())
+						if (board.isAmbiguous())
 							sq.main_digit = initial(column, row).main_digit;
 						else
 							break;
@@ -87,11 +87,11 @@ namespace sudoku {
 	}
 
 	SudokuSquare& SudokuBoard::operator()(SudokuValue column, SudokuValue row) {
-		return board[column() * 8 + row()];
+		return board[column() * 9 + row() - 9];
 	}
 
 	const SudokuSquare& SudokuBoard::operator()(SudokuValue column, SudokuValue row) const {
-		return board[column() * 8 + row()];
+		return board[column() * 9 + row() - 9];
 	}
 
 	std::ostream& operator<<(std::ostream& out, const SudokuBoard& b) {
@@ -145,10 +145,9 @@ namespace sudoku {
 			for (SudokuValue row: value_range) {
 				if (!operator()(column, row).main_digit.has_value()) {
 					// We do the backtracking from here.
-					int test = 1;
 					for (SudokuValue next_value: order) {
 						if (can_place_digit(column, row, next_value)) {
-							cpy(column, row).main_digit = next_value;
+							cpy(column, row).main_digit = SudokuValue(next_value);
 							if (cpy.fill()) {
 								*this = cpy;
 								return true;
