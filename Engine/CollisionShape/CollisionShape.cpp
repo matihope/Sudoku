@@ -26,8 +26,8 @@ namespace mk {
 		target.draw(shape, states);
 	}
 
-	bool CircleCollision::contains(const Math::Vector2f& point) const {
-		auto diff = Math::Vector2f(getPosition()) - point;
+	bool CircleCollision::contains(const math::Vector2f& point) const {
+		auto diff = math::Vector2f(getPosition()) - point;
 		return diff.length_squared() <= m_radius * m_radius;
 	}
 
@@ -48,7 +48,7 @@ namespace mk {
 		m_size.y = height;
 	}
 
-	const Math::Vector2f& RectCollision::getSize() const { return m_size; }
+	const math::Vector2f& RectCollision::getSize() const { return m_size; }
 
 	void RectCollision::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 		if (!shouldDraw()) return;
@@ -59,7 +59,7 @@ namespace mk {
 		target.draw(shape, states);
 	}
 
-	bool RectCollision::contains(const Math::Vector2f& point) const {
+	bool RectCollision::contains(const math::Vector2f& point) const {
 		auto pos = m_parent->getTransform().transformPoint(getPosition());
 		if (point.x < pos.x) return false;
 		if (point.x > pos.x + m_size.x) return false;

@@ -7,11 +7,11 @@
 namespace mk {
 
 
-	void BoxyWorldEntity::setMaxRenderSize(Math::Vector2u newSize) {
+	void BoxyWorldEntity::setMaxRenderSize(math::Vector2u newSize) {
 		this->maxSize = newSize;
 	}
 
-	Math::Vector2u BoxyWorldEntity::getMaxSize() const { return maxSize; }
+	math::Vector2u BoxyWorldEntity::getMaxSize() const { return maxSize; }
 
 	void BoxyWorldEntity::draw(
 		sf::RenderTarget &target, sf::RenderStates states

@@ -1,14 +1,12 @@
 #include "SudokuBoardEntity.hpp"
+#include "Utils/Converters.hpp"
 
 SudokuBoardEntity::SudokuBoardEntity() {
 	mk::JsonBridge colors("colors.json");
 
-	using sf::Color;
-	using std::stoul;
-	using std::string;
-	even_color = Color(stoul(string(colors["board"]["even"]), nullptr, 16) * 256 + 0xFF);
-	odd_color  = Color(stoul(string(colors["board"]["odd"]), nullptr, 16) * 256 + 0xFF);
-	line_color = Color(stoul(string(colors["board"]["line"]), nullptr, 16) * 256 + 0xFF);
+	even_color = mk::Converters::colorFromStrRGB(colors["board"]["even"]);
+	odd_color  = mk::Converters::colorFromStrRGB(colors["board"]["odd"]);
+	line_color = mk::Converters::colorFromStrRGB(colors["board"]["line"]);
 }
 
 void SudokuBoardEntity::onReady(mk::Game& game) {
@@ -16,25 +14,26 @@ void SudokuBoardEntity::onReady(mk::Game& game) {
 	tiles->setSize(81);
 
 	auto [view_width, view_height] = game.getViewportSize();
-	float tile_size                = (float) std::min(view_width, view_height) / BOARD_SIZE;
+	square3x3_size                 = (float) std::min(view_width, view_height) / BOARD_SIZE;
 
-	spawnTiles(game, tile_size);
-	spawnLines(game, tile_size);
+	spawnTiles(game, square3x3_size);
+	spawnLines(game, square3x3_size);
 
 	for (sudoku::SudokuValue col: sudoku::value_range) {
 		for (sudoku::SudokuValue row: sudoku::value_range) {
 			auto&& text_color = (row() + col()) % 2 ? even_color : odd_color;
 			label_tiles[col()][row()]
-				= addChild<SudokuTileEntity>(game, col(), row(), tile_size, text_color);
+				= addChild<SudokuTileEntity>(game, col(), row(), square3x3_size, text_color);
 			label_tiles[col()][row()]->setMainDigit(row());
 		}
 	}
 }
+
 void SudokuBoardEntity::spawnTiles(mk::Game& game, float tile_size) {
 	for (int x = 0; x < BOARD_SIZE; x++) {
 		for (int y = 0; y < BOARD_SIZE; y++) {
 			auto&& sprite = tiles->getSprite(y * BOARD_SIZE + x);
-			sprite.setPosition((mk::Math::Vector2f(x, y) * tile_size).as<sf::Vector2f>());
+			sprite.setPosition((mk::math::Vector2f(x, y) * tile_size).as<sf::Vector2f>());
 			sprite.setSize({ tile_size, tile_size });
 			if ((x + y) % 2)
 				sprite.setColor(odd_color);
@@ -78,4 +77,9 @@ void SudokuBoardEntity::load(const sudoku::SudokuBoard& board_data) {
 				my_tile->setNote(note_digit, board_tile.note_digits[note_digit()]);
 		}
 	}
+}
+
+mk::RectF SudokuBoardEntity::getBounds() const {
+	auto [x, y] = getPosition();
+	return { x, y, square3x3_size * 9.f, square3x3_size * 9.f };
 }

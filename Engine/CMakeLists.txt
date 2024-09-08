@@ -31,6 +31,8 @@ set(ENGINE_SOURCES
         Random/Random.hpp
         Utils/Utils.hpp
         Utils/Rect.hpp
+        Utils/Converters.hpp
+        Utils/Converters.cpp
         ResPath/ResPath.cpp
         ResPath/ResPath.hpp
 )

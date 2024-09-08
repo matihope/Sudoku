@@ -1,6 +1,6 @@
 #include "Vector2.hpp"
 
-namespace mk::Math {
+namespace mk::math {
 	Vector2f normalizeVector(const Vector2f vector) {
 		if (vector.x == 0 || vector.y == 0) return vector;
 		float length = std::sqrt(vector.x * vector.x + vector.y * vector.y);

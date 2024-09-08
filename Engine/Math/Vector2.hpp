@@ -3,7 +3,7 @@
 #include <cmath>
 #include <ostream>
 
-namespace mk::Math {
+namespace mk::math {
 
 	template<typename T>
 	requires std::is_arithmetic_v<T> struct Vector2 {

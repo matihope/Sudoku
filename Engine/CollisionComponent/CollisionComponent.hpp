@@ -26,7 +26,7 @@ namespace mk {
 		CollisionComponent(const CollisionComponent& c) = default;
 
 		~CollisionComponent() override                           = default;
-		virtual bool contains(const Math::Vector2f& point) const = 0;
+		virtual bool contains(const math::Vector2f& point) const = 0;
 
 		bool shouldDraw() const;
 		void setDraw(bool draw);

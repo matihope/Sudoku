@@ -4,7 +4,7 @@
 
 #include <array>
 
-namespace mk::Math {
+namespace mk::math {
 	template<uint h, uint w>
 	class Matrix: public std::array<std::array<double, w>, h> {
 	public:

@@ -62,7 +62,7 @@ namespace mk {
 			= sqrtf(arrowHead.x * arrowHead.x + arrowHead.y * arrowHead.y);
 		setSize(width, newLen, wingLength);
 		auto angle = (float) atan(arrowHead.y / arrowHead.x);
-		angle      = Math::radiansToDegrees(angle);
+		angle      = math::radiansToDegrees(angle);
 		angle += 90.f;
 		if (arrowHead.x < 0) angle += 180.;
 

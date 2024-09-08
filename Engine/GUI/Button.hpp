@@ -31,10 +31,10 @@ namespace mk::GUI {
 		VAlignment m_valignment = VAlignment::TOP;
 
 		// minimal size of the button background
-		Math::Vector2f minSize = { -1, -1 };
+		math::Vector2f minSize = { -1, -1 };
 
 		// space between font border end and an edge
-		Math::Vector2f minSpaceBetween = { -1, -1 };
+		math::Vector2f minSpaceBetween = { -1, -1 };
 
 		void fixLabelPosition();
 
@@ -65,7 +65,7 @@ namespace mk::GUI {
 		);
 		void setBackgroundColors(sf::Color colors);
 
-		void setMinSpaceBetween(Math::Vector2f space);
-		void setMinSize(Math::Vector2f size);
+		void setMinSpaceBetween(math::Vector2f space);
+		void setMinSize(math::Vector2f size);
 	};
 }  // namespace mk::GUI

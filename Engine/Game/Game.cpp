@@ -1,17 +1,14 @@
 
 #include "Game.hpp"
 
-#include "ResourceManager/ResourceManager.hpp"
-
+#include <ResourceManager/ResourceManager.hpp>
 #include <CollisionComponent/CollisionComponent.hpp>
 #include <SFML/Graphics.hpp>
-#include <iostream>
-#include <iterator>
 
 namespace {
-	mk::Math::Vector2f
-		scaleToFit(const mk::Math::Vector2f viewSize, const mk::Math::Vector2u windowSize) {
-		mk::Math::Vector2f scale;
+	mk::math::Vector2f
+		scaleToFit(const mk::math::Vector2f viewSize, const mk::math::Vector2u windowSize) {
+		mk::math::Vector2f scale;
 		scale.x = viewSize.x / (float) windowSize.x;
 		scale.y = viewSize.y / (float) windowSize.y;
 		if (scale.x < scale.y) {
@@ -52,7 +49,7 @@ namespace mk {
 
 	void Game::update() {
 		m_delta_time = m_clock.restart().asSeconds();
-		m_mouse_pos  = Math::Vector2f(
+		m_mouse_pos  = math::Vector2f(
             getRenderWindow().mapPixelToCoords(sf::Mouse::getPosition(getRenderWindow()))
         );
 
@@ -76,7 +73,7 @@ namespace mk {
 			m_fps_sum += m_delta_time;
 			if (m_fps_sum >= 1.f) {
 				m_fps_label.setText(std::to_string(m_fps_frame_count));
-				m_fps_sum = 0.f;
+				m_fps_sum         = 0.f;
 				m_fps_frame_count = 0;
 			}
 		}
@@ -88,7 +85,7 @@ namespace mk {
 	}
 
 	void Game::popScene() {
-		if(!m_scene_stack.empty()) {
+		if (!m_scene_stack.empty()) {
 			m_safe_scene_delete_queue.push(std::move(m_scene_stack.top()));
 			m_scene_stack.pop();
 		}
@@ -135,15 +132,15 @@ namespace mk {
 
 	void Game::setPrintFPS(const bool& printFPS) { m_enable_print_fps = printFPS; }
 
-	Math::Vector2u Game::getWindowSize() { return Math::Vector2u(m_window.getSize()); }
+	math::Vector2u Game::getWindowSize() { return math::Vector2u(m_window.getSize()); }
 
-	Math::Vector2u Game::getViewportSize() { return Math::Vector2u(m_view.getSize()); }
+	math::Vector2u Game::getViewportSize() { return math::Vector2u(m_view.getSize()); }
 
 	sf::RenderWindow& Game::getRenderWindow() { return m_window; }
 
 	void Game::updateViewportSize() {
-		Math::Vector2f viewportScale
-			= scaleToFit(Math::Vector2f(m_view.getSize()), getWindowSize());
+		math::Vector2f viewportScale
+			= scaleToFit(math::Vector2f(m_view.getSize()), getWindowSize());
 		m_view.setViewport(sf::FloatRect(
 			sf::Vector2f(0.5f - viewportScale.x / 2, 0.5f - viewportScale.y / 2),
 			viewportScale.as<sf::Vector2f>()
@@ -151,7 +148,7 @@ namespace mk {
 		m_window.setView(m_view);
 	}
 
-	Math::Vector2f Game::getMousePos() { return m_mouse_pos; }
+	math::Vector2f Game::getMousePos() { return m_mouse_pos; }
 
 	const sf::View* Game::getView() { return &m_view; }
 
@@ -194,6 +191,7 @@ namespace mk {
 			std::string(m_game_settings["window"]["title"]),
 			sf::Style::Default
 		);
+
 		m_window.setVerticalSyncEnabled(m_game_settings["window"]["vsync"]);
 		setViewportSize(sf::Vector2u(
 			m_game_settings["viewport"]["width"], m_game_settings["viewport"]["height"]

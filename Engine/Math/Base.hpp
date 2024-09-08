@@ -13,7 +13,7 @@
 #define M_PIf          3.14159265358979323846f /* pi */
 typedef unsigned int uint;
 
-namespace mk::Math {
+namespace mk::math {
 	template<typename T>
 	int sign(T val) {
 		return (0 < val) - (val < 0);

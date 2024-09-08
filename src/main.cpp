@@ -1,7 +1,6 @@
 #include "GUI/Button.hpp"
 #include "SudokuGame.hpp"
 #include "entities/SudokuSceneEntity.hpp"
-#include "ResourceManager/ResourceManager.hpp"
 #include <iostream>
 #include <memory>
 
@@ -17,15 +16,13 @@ public:
 			std::make_pair("Empty board", sudoku::SudokuGame::Difficulty::EMPTY),
 		};
 
-
-		auto font = &mk::ResourceManager::get().getFont("Born2bSportyV2.ttf");
 		std::optional<mk::GUI::Button*> previous_button;
 		for (auto&& [button_text, difficulty]: button_presets) {
 			buttons.push_back({ nullptr, difficulty });
 			auto&& button = buttons.back().first;
-			button        = addChild<mk::GUI::Button>(game, font, button_text);
+			button        = addChild<mk::GUI::Button>(game, game.getDefaultFont(), button_text);
 			button->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::TOP);
-			button->setMinSize({ game.getViewportSize().x / 3.f, -1 });
+			button->setMinSize({ game.getViewportSize().x / 3.f, 50.f });
 			button->setMinSpaceBetween({ 5, 5 });
 			float button_y = game.getViewportSize().y / 3.;
 			if (previous_button.has_value())
@@ -47,7 +44,7 @@ private:
 
 int main() {
 	mk::Game game = mk::Game("settings.json");
-	game.getDefaultFont()->setSmooth(false);
+	game.getDefaultFont()->setSmooth(true);
 	game.addScene(std::make_unique<Menu>());
 	std::cout << "Looped: " << sudoku::getLoopCounter() << "\n";
 	game.run();

@@ -166,13 +166,13 @@ namespace mk::GUI {
 		setBackgroundColors(colors, colors, colors);
 	}
 
-	void Button::setMinSpaceBetween(Math::Vector2f space) {
+	void Button::setMinSpaceBetween(math::Vector2f space) {
 		minSpaceBetween = space;
 		updateDefaultCollisionShape();
 		fixLabelPosition();
 	}
 
-	void Button::setMinSize(Math::Vector2f size) {
+	void Button::setMinSize(math::Vector2f size) {
 		minSize = size;
 		updateDefaultCollisionShape();
 		fixLabelPosition();

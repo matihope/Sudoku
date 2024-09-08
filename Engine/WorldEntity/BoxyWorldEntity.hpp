@@ -11,15 +11,16 @@ namespace mk {
 
 	class BoxyWorldEntity: public WorldEntity {
 	public:
-		void setMaxRenderSize(Math::Vector2u newSize);
+		void setMaxRenderSize(math::Vector2u newSize);
 		void setMaxRenderSize(unsigned int width, unsigned int height);
-		[[nodiscard]] Math::Vector2u getMaxSize() const;
+		[[nodiscard]]
+		math::Vector2u getMaxSize() const;
 
 		void draw(sf::RenderTarget &target, sf::RenderStates states)
 			const override;
 
 	private:
-		Math::Vector2u maxSize = { 0, 0 };
+		math::Vector2u maxSize = { 0, 0 };
 	};
 
 }  // namespace mk

@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace mk::Math {
+namespace mk::math {
 	bool doLinesIntersect(
 		Vector2f lineAStart,
 		Vector2f lineAEnd,

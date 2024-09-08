@@ -12,11 +12,13 @@ namespace mk {
 	public:
 		T left, top, width, height;
 
-		[[nodiscard]] Math::Vector2<T> getPosition() const {
+		[[nodiscard]]
+		math::Vector2<T> getPosition() const {
 			return { left, top };
 		}
 
-		[[nodiscard]] Math::Vector2<T> getSize() const {
+		[[nodiscard]]
+		math::Vector2<T> getSize() const {
 			return { width, height };
 		}
 
