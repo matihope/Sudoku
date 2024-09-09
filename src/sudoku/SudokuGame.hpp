@@ -1,7 +1,9 @@
 #pragma once
+#include <cstdint>
 #include <vector>
 #include <optional>
 #include <cassert>
+#include <ostream>
 
 namespace sudoku {
 	uint32_t getLoopCounter();
