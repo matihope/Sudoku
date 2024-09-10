@@ -32,11 +32,10 @@ Build it yourself:
 
 ```shell
 bash -c "git clone https://github.com/matihope/Sudoku.git && \
-    cd Chess && \
+    cd Sudoku && \
     cmake -B build && \
-    cd build && \
-    make && \
-    ./SudokuByMatihope"
+    cmake --build build && \
+    ./build/SudokuByMatihope"
 ```
 
 List of attributions:
