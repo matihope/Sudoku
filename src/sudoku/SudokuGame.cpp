@@ -209,29 +209,24 @@ namespace sudoku {
 	}
 
 	bool SudokuGame::tryPlay(SudokuValue col, SudokuValue row, SudokuValue value) {
+		if (!history.back().isCorrect()) return false;
+
 		auto original_value  = initial(col, row).main_digit;
 		bool finally_correct = original_value == value;
 
 		SudokuBoard board = history.back();
-		if (finally_correct) {
-			auto&& tile = board(col, row);
-			if (!tile.is_initial) {
-				tile.main_digit = value;
-				tile.is_correct = true;
-				history.push_back(board);
-			}
-			return true;
-		}
+
 		if (board.place_digit(col, row, value)) {
 			history.push_back(board);
 			return true;
-		} else {
-			auto&& tile = board(col, row);
-			if (!tile.is_initial) {
-				tile.main_digit = value;
-				tile.is_correct = false;
-				history.push_back(board);
-			}
+		}
+
+		auto&& tile = board(col, row);
+		if (!tile.is_initial) {
+			for (auto&& note_digit: tile.note_digits) note_digit = false;
+			tile.main_digit = value;
+			tile.is_correct = false;
+			history.push_back(board);
 		}
 		return false;
 	}
@@ -255,5 +250,21 @@ namespace sudoku {
 
 	void SudokuGame::undo() {
 		if (history.size() > 1) history.pop_back();
+	}
+
+	bool SudokuGame::isOver() const {
+		for (SudokuValue col: value_range) {
+			for (SudokuValue row: value_range)
+				if (!history.back()(col, row).main_digit.has_value()) return false;
+		}
+		return true;
+	}
+
+	bool SudokuBoard::isCorrect() const {
+		for (SudokuValue col: value_range) {
+			for (SudokuValue row: value_range)
+				if (!operator()(col, row).is_correct) return false;
+		}
+		return true;
 	}
 }

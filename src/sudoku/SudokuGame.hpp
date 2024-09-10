@@ -80,6 +80,11 @@ namespace sudoku {
 		[[nodiscard]]
 		bool isAmbiguous() const;
 
+		/**
+		 * @brief Checks if all squares have not set the is_correct flag.
+		 */
+		bool isCorrect() const;
+
 
 	private:
 		struct IsAmbiguousResult {
@@ -104,13 +109,7 @@ namespace sudoku {
 
 		void fill();
 
-		bool isOver() const {
-			for (SudokuValue col: value_range) {
-				for (SudokuValue row: value_range)
-					if (!history.back()(col, row).main_digit.has_value()) return false;
-			}
-			return true;
-		}
+		bool isOver() const;
 
 		bool tryPlay(SudokuValue col, SudokuValue row, SudokuValue value);
 

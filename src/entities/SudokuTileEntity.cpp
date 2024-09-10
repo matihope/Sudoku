@@ -11,7 +11,8 @@ SudokuTileEntity::SudokuTileEntity(
 	  tile_size(tile_size) {
 	mk::JsonBridge colors("colors.json");
 	background_color      = mk::converters::colorFromStrRGB(colors["board"]["background"]);
-	text_color            = mk::converters::colorFromStrRGB(colors["board"]["odd"]);
+	text_color            = mk::converters::colorFromStrRGB(colors["board"]["font"]);
+	note_text_color       = mk::converters::colorFromStrRGB(colors["board"]["line"]);
 	highlight_color       = mk::converters::colorFromStrRGB(colors["board"]["highlight"]);
 	minor_highlight_color = mk::converters::colorFromStrRGB(colors["board"]["minor_highlight"]);
 	wrong_color           = mk::converters::colorFromStrRGB(colors["board"]["wrong"]);
@@ -51,7 +52,7 @@ void SudokuTileEntity::onReady(mk::Game& game) {
 				-grid_unit * (x - 1.f),
 				-grid_unit * (y - 1.f),
 			});
-			lbl->setColor(text_color);
+			lbl->setColor(note_text_color);
 		}
 	}
 }

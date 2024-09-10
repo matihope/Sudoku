@@ -27,7 +27,7 @@ public:
 private:
 	bool      is_highlighted = false;
 	sf::Color background_color{}, text_color{}, minor_highlight_color{}, highlight_color{},
-		wrong_color{};
+		wrong_color{}, note_text_color{};
 	float           tile_size{};
 	mk::GUI::Label* main_digit{};
 	mk::GUI::Label* note_digits[9]{};

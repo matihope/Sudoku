@@ -1,7 +1,7 @@
 {
   "board": {
     "background": "E0D8DE",
-    "odd": "4B3B47",
+    "font": "4B3B47",
     "line": "6A6262",
     "highlight": "9C9990",
     "minor_highlight": "CFD2B2",
