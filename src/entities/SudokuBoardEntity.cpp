@@ -1,7 +1,6 @@
 #include "SudokuBoardEntity.hpp"
 #include "SudokuGame.hpp"
 #include "Utils/Converters.hpp"
-#include <iostream>
 
 SudokuBoardEntity::SudokuBoardEntity() {
 	mk::JsonBridge colors("colors.json");
