@@ -2,9 +2,7 @@
 #include <fstream>
 
 namespace mk {
-	JsonBridge::JsonBridge(const ResPath& filePath) {
-		load(filePath);
-	}
+	JsonBridge::JsonBridge(const ResPath& filePath) { load(filePath); }
 
 	bool JsonBridge::saveCurrentState() {
 		std::fstream jsonFile(m_file_path.getPath(), std::ios::out);
@@ -26,7 +24,7 @@ namespace mk {
 
 		if (!jsonFile.is_open())
 			throw std::runtime_error(
-				std::format("Cannot find file %", m_file_path.getPath().c_str())
+				std::string("Cannot find file: ") + m_file_path.getPath().c_str()
 			);
 
 		jsonFile >> data;
