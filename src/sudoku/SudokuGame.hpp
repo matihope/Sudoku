@@ -104,22 +104,19 @@ namespace sudoku {
 
 		void fill();
 
+		bool isOver() const {
+			for (SudokuValue col: value_range) {
+				for (SudokuValue row: value_range)
+					if (!history.back()(col, row).main_digit.has_value()) return false;
+			}
+			return true;
+		}
+
 		bool tryPlay(SudokuValue col, SudokuValue row, SudokuValue value);
 
-		bool toggleNote(SudokuValue col, SudokuValue row, SudokuValue digit) {
-			SudokuBoard board = history.back();
-			if (!board(col, row).main_digit.has_value()) {
-				auto&& note_digit = board(col, row).note_digits[digit()];
-				note_digit        = !note_digit;
-				history.push_back(board);
-				return true;
-			}
-			return false;
-		}
+		bool toggleNote(SudokuValue col, SudokuValue row, SudokuValue digit);
 
-		void undo() {
-			if (history.size() > 1) history.pop_back();
-		}
+		void undo();
 
 		/**
 		 * @brief A function that helps to iterate over all squares in a 3x3 square,

@@ -241,4 +241,19 @@ namespace sudoku {
 		if (4 <= value && value <= 6) return { 4, 5, 6 };
 		return { 7, 8, 9 };
 	}
+
+	bool SudokuGame::toggleNote(SudokuValue col, SudokuValue row, SudokuValue digit) {
+		SudokuBoard board = history.back();
+		if (!board(col, row).main_digit.has_value()) {
+			auto&& note_digit = board(col, row).note_digits[digit()];
+			note_digit        = !note_digit;
+			history.push_back(board);
+			return true;
+		}
+		return false;
+	}
+
+	void SudokuGame::undo() {
+		if (history.size() > 1) history.pop_back();
+	}
 }
