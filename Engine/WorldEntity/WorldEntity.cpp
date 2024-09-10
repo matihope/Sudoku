@@ -69,6 +69,11 @@ namespace mk {
 
 	void WorldEntity::hide() { m_show = false; }
 
+	sf::Transform WorldEntity::getGlobalTransform() const {
+		if (m_parent == nullptr) return getTransform();
+		return m_parent->getGlobalTransform() * getTransform();
+	}
+
 	sf::Vector2f WorldEntity::getGlobalPosition() const {
 		if (m_parent == nullptr) return getPosition();
 		return getPosition() + m_parent->getGlobalPosition();

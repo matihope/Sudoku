@@ -11,9 +11,10 @@ namespace mk {
 	class RectShape: public WorldEntity {
 	public:
 		RectShape() = default;
-		RectShape(sf::Color myColor, sf::Vector2f size);
-		void onDraw(sf::RenderTarget &target, sf::RenderStates states)
-			const override;
+		RectShape(sf::Color myColor, mk::math::Vector2f size);
+		void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+		void setColor(const sf::Color& color);
 
 	private:
 		sf::RectangleShape rect;

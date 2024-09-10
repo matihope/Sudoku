@@ -1,8 +1,15 @@
 {
   "board": {
-    "even":  "D8DBE2",
-    "odd":  "A9BCD0",
-    "line": "373F51",
-    "highlighted": "58A4B0"
+    "background": "E0D8DE",
+    "odd": "4B3B47",
+    "line": "6A6262",
+    "highlight": "9C9990",
+    "minor_highlight": "CFD2B2",
+    "wrong": "FF4242"
+  },
+  "buttons": {
+    "normal": "252525",
+    "hover": "2F2F2F",
+    "press": "343434"
   }
 }

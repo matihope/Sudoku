@@ -46,6 +46,5 @@ int main() {
 	mk::Game game = mk::Game("settings.json");
 	game.getDefaultFont()->setSmooth(true);
 	game.addScene(std::make_unique<Menu>());
-	std::cout << "Looped: " << sudoku::getLoopCounter() << "\n";
 	game.run();
 }

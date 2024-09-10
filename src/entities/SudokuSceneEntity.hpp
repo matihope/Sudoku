@@ -2,7 +2,7 @@
 
 #include "GUI/Button.hpp"
 #include "SudokuBoardEntity.hpp"
-#include "WorldEntity/BoxyWorldEntity.hpp"
+#include "SudokuGame.hpp"
 
 class SudokuScene: public mk::WorldEntity {
 public:
@@ -12,17 +12,20 @@ public:
 
 	void handleEvent(mk::Game& game, const sf::Event& event) override;
 
-	void onUpdate(mk::Game& game, float dt) override {
-		if(menu_button->isPressed()) game.popScene();
-	}
+	void onUpdate(mk::Game& game, float dt) override;
 
 private:
 	void spawnButtons(mk::Game& game);
 
-	SudokuBoardEntity* board = nullptr;
+	void handlePutDigit(sudoku::SudokuValue digit);
+
+	SudokuBoardEntity* board        = nullptr;
+	bool               taking_notes = false;
 	sudoku::SudokuGame sudoku;
 
 	mk::GUI::Button* menu_button = nullptr;
+	mk::GUI::Button* note_button = nullptr;
+	mk::GUI::Button* undo_button = nullptr;
 
-	std::array<mk::GUI::Button*, 10> number_buttons;
+	std::array<mk::GUI::Button*, 10> number_buttons{};
 };

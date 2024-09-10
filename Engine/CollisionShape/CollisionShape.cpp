@@ -60,7 +60,7 @@ namespace mk {
 	}
 
 	bool RectCollision::contains(const math::Vector2f& point) const {
-		auto pos = m_parent->getTransform().transformPoint(getPosition());
+		auto pos = m_parent->getGlobalTransform().transformPoint(getPosition());
 		if (point.x < pos.x) return false;
 		if (point.x > pos.x + m_size.x) return false;
 		if (point.y < pos.y) return false;

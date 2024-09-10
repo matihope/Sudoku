@@ -70,5 +70,6 @@ namespace mk {
 		void hide();
 
 		sf::Vector2f getGlobalPosition() const;
+		sf::Transform getGlobalTransform() const;
 	};
 }  // namespace mk

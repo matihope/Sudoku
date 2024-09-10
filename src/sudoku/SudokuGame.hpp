@@ -46,6 +46,7 @@ namespace sudoku {
 		std::optional<SudokuValue> main_digit{};
 		std::array<bool, 10>       note_digits{};
 		bool                       is_initial{};
+		bool                       is_correct = true;
 	};
 
 	class SudokuBoard {
@@ -102,6 +103,29 @@ namespace sudoku {
 		const SudokuBoard& getBoard() const;
 
 		void fill();
+
+		bool tryPlay(SudokuValue col, SudokuValue row, SudokuValue value);
+
+		bool toggleNote(SudokuValue col, SudokuValue row, SudokuValue digit) {
+			SudokuBoard board = history.back();
+			if (!board(col, row).main_digit.has_value()) {
+				auto&& note_digit = board(col, row).note_digits[digit()];
+				note_digit        = !note_digit;
+				history.push_back(board);
+				return true;
+			}
+			return false;
+		}
+
+		void undo() {
+			if (history.size() > 1) history.pop_back();
+		}
+
+		/**
+		 * @brief A function that helps to iterate over all squares in a 3x3 square,
+		 * that should contain unique digits. This returns column or row numbers.
+		 */
+		static std::array<SudokuValue, 3> getColOrRowRangeForValue(sudoku::SudokuValue value);
 
 	private:
 		std::vector<SudokuBoard> history;
