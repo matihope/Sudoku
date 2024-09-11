@@ -11,16 +11,16 @@ namespace mk {
 	class SpriteBatch: public WorldEntity {
 	public:
 		SpriteBatch();
-		explicit SpriteBatch(const sf::Texture *texture);
-		explicit SpriteBatch(std::size_t size, const sf::Texture *texture);
-		void                      setSize(std::size_t size);
-		[[nodiscard]] std::size_t getSize() const;
-		void                      setTexture(const sf::Texture *newTexture);
-		const sf::Texture        *getTexture();
+		explicit SpriteBatch(const sf::Texture* texture);
+		explicit SpriteBatch(std::size_t size, const sf::Texture* texture);
+		void setSize(std::size_t size);
+		[[nodiscard]]
+		std::size_t               getSize() const;
+		void                      setTexture(const sf::Texture* newTexture);
+		const sf::Texture*        getTexture();
 		QuickSprite               getSprite(unsigned int id);
-		std::vector<QuickSprite> &getSprites();
-		void onDraw(sf::RenderTarget &target, sf::RenderStates states)
-			const override;
+		std::vector<QuickSprite>& getSprites();
+		void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 		// sets all vertices in grid
 		// top left's id is 0 and increments horizontally first
@@ -33,6 +33,6 @@ namespace mk {
 		std::vector<QuickSprite> m_sprites;
 		void                     generateQuickSprites();
 
-		const sf::Texture *m_texture = nullptr;
+		const sf::Texture* m_texture = nullptr;
 	};
 }  // namespace mk

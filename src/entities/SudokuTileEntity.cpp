@@ -27,14 +27,14 @@ void SudokuTileEntity::onReady(mk::Game& game) {
 	background_tile->setOrigin(tile_size / 2., tile_size / 2.);
 	background_tile->setOrigin(tile_size / 2., tile_size / 2.);
 
-	tile_button = addChild<mk::GUI::Button>(game, game.getDefaultFont(), "");
+	tile_button = addChild<mk::gui::Button>(game, game.getDefaultFont(), "");
 	tile_button->setBackgroundColors(sf::Color::Transparent);
 	tile_button->setMinSize(size);
 	tile_button->setOrigin((size / 2.).as<sf::Vector2f>());
 
 	auto font  = game.getDefaultFont();
-	main_digit = addChild<mk::GUI::Label>(game, font);
-	main_digit->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::CENTER);
+	main_digit = addChild<mk::gui::Label>(game, font);
+	main_digit->setAlignment(mk::gui::HAlignment::MIDDLE, mk::gui::VAlignment::CENTER);
 	main_digit->setText("0");
 	main_digit->setTextSize(64);
 	main_digit->setColor(text_color);
@@ -45,9 +45,9 @@ void SudokuTileEntity::onReady(mk::Game& game) {
 		for (int y = 0; y < 3; y++) {
 			auto   index = y * 3 + x;
 			auto&& lbl   = note_digits[index];
-			lbl          = addChild<mk::GUI::Label>(game, font);
+			lbl          = addChild<mk::gui::Label>(game, font);
 			lbl->setText(std::string(1, '0' + (index + 1)));
-			lbl->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::CENTER);
+			lbl->setAlignment(mk::gui::HAlignment::MIDDLE, mk::gui::VAlignment::CENTER);
 			lbl->setPosition({
 				-grid_unit * (x - 1.f),
 				-grid_unit * (y - 1.f),

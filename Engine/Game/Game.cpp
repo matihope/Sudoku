@@ -213,7 +213,7 @@ namespace mk {
 		m_fps_label.setFont(m_default_font);
 		m_fps_label.setText("0");
 		m_fps_label.setTextSize(32);
-		m_fps_label.setAlignment(GUI::HAlignment::RIGHT, GUI::VAlignment::TOP);
+		m_fps_label.setAlignment(gui::HAlignment::RIGHT, gui::VAlignment::TOP);
 
 		// lastly, set cursor
 		m_current_cursor_type = sf::Cursor::Arrow;

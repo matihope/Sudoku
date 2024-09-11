@@ -41,8 +41,8 @@ void SudokuScene::spawnButtons(mk::Game& game) {
 
 	// Menu button
 	float menu_button_width = (game.getViewportSize().x - board->getBounds().width) - 2.f * padding;
-	menu_button             = addChild<mk::GUI::Button>(game, game.getDefaultFont(), "Menu");
-	menu_button->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::BOTTOM);
+	menu_button             = addChild<mk::gui::Button>(game, game.getDefaultFont(), "Menu");
+	menu_button->setAlignment(mk::gui::HAlignment::MIDDLE, mk::gui::VAlignment::BOTTOM);
 	menu_button->setMinSize({ menu_button_width, 50.f });
 	menu_button->setMinSpaceBetween({ 5, 5 });
 	menu_button->setPosition({ (game.getViewportSize().x + board->getBounds().width) / 2.f,
@@ -58,11 +58,11 @@ void SudokuScene::spawnButtons(mk::Game& game) {
 		for (uint8_t x = 0; x < 3; x++) {
 			sudoku::SudokuValue value = y * 3 + x + 1;
 
-			number_buttons[value()] = addChild<mk::GUI::Button>(
+			number_buttons[value()] = addChild<mk::gui::Button>(
 				game, game.getDefaultFont(), std::string(1, '0' + value())
 			);
 			auto&& btn = number_buttons[value()];
-			btn->setAlignment(mk::GUI::HAlignment::LEFT, mk::GUI::VAlignment::TOP);
+			btn->setAlignment(mk::gui::HAlignment::LEFT, mk::gui::VAlignment::TOP);
 			btn->setMinSize({ num_button_width, num_button_width });
 			btn->setPosition((top_left
 			                  + mk::math::Vector2f(
@@ -76,25 +76,25 @@ void SudokuScene::spawnButtons(mk::Game& game) {
 	}
 
 	// Undo button
-	undo_button = addChild<mk::GUI::Button>(game, game.getDefaultFont(), "Undo");
-	undo_button->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::BOTTOM);
+	undo_button = addChild<mk::gui::Button>(game, game.getDefaultFont(), "Undo");
+	undo_button->setAlignment(mk::gui::HAlignment::MIDDLE, mk::gui::VAlignment::BOTTOM);
 	undo_button->setMinSize({ menu_button_width, 50.f });
 	undo_button->setMinSpaceBetween({ 5, 5 });
-	undo_button->setPosition({ menu_button->getPosition().x, menu_button->getPosition().y - 75.f }
-	);
+	undo_button->setPosition({ menu_button->getPosition().x, menu_button->getPosition().y - 75.f });
 	undo_button->setBackgroundColors(normal_color, hover_color, press_color);
 	undo_button->setFontColors(font_color);
 
 	// Note button
-	note_button = addChild<mk::GUI::Button>(game, game.getDefaultFont(), "Notes: Off");
-	note_button->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::BOTTOM);
+	note_button = addChild<mk::gui::Button>(game, game.getDefaultFont(), "Notes: Off");
+	note_button->setAlignment(mk::gui::HAlignment::MIDDLE, mk::gui::VAlignment::BOTTOM);
 	note_button->setMinSize({ menu_button_width, 50.f });
 	note_button->setMinSpaceBetween({ 5, 5 });
 	note_button->setPosition({ undo_button->getPosition().x, undo_button->getPosition().y - 55.f });
 	note_button->setBackgroundColors(normal_color, hover_color, press_color);
 	note_button->setFontColors(font_color);
 
-	// Note taking
+	// Difficulty and time
+	auto diff = addChild<mk::gui::Label>();
 }
 
 void SudokuScene::onUpdate(mk::Game& game, float dt) {

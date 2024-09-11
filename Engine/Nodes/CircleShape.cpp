@@ -10,8 +10,7 @@ namespace mk {
 		setRadius(radius);
 	}
 
-	void CircleShape::onDraw(sf::RenderTarget &target, sf::RenderStates states)
-		const {
+	void CircleShape::onDraw(sf::RenderTarget& target, sf::RenderStates states) const {
 		states.transform *= getTransform();
 		target.draw(circle, states);
 	}

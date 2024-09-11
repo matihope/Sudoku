@@ -23,7 +23,7 @@ namespace mk {
 		}
 
 		template<class X>
-		bool overlaps(const Rect<X> &otherRect) {
+		bool overlaps(const Rect<X>& otherRect) {
 			if (left + width < otherRect.left) return false;
 			if (otherRect.left + otherRect.width < left) return false;
 			if (top + height < otherRect.top) return false;

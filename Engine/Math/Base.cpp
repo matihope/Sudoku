@@ -15,7 +15,5 @@ namespace mk::math {
 		return res + value;
 	}
 
-	float degreesToRadians(float degrees) {
-		return makeInRange(degrees, 360.f) / 180.f * M_PIf;
-	}
+	float degreesToRadians(float degrees) { return makeInRange(degrees, 360.f) / 180.f * M_PIf; }
 }  // namespace mk::Math

@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <Updatable/Updatable.hpp>
 
-namespace mk::GUI {
+namespace mk::gui {
 	Button::Button() {
 		m_label.setAlignment(HAlignment::MIDDLE, VAlignment::CENTER);
 		m_background.setFillColor(m_background_color_normal);

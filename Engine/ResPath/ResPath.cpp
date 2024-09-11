@@ -11,7 +11,5 @@ namespace mk {
 
 	ResPath::ResPath(const char* path): ResPath(std::string(path)) {}
 
-	const char* ResPath::strPath() const {
-		return real_path.c_str();
-	}
+	const char* ResPath::strPath() const { return real_path.c_str(); }
 }  // mk

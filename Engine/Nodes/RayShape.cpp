@@ -11,15 +11,12 @@
 namespace mk {
 
 
-	RayShape::RayShape(
-		sf::Color color, float width, float length, float wingLength
-	) {
+	RayShape::RayShape(sf::Color color, float width, float length, float wingLength) {
 		setColor(color);
 		setSize(width, length, wingLength);
 	}
 
-	void RayShape::onDraw(sf::RenderTarget &target, sf::RenderStates states)
-		const {
+	void RayShape::onDraw(sf::RenderTarget& target, sf::RenderStates states) const {
 		states.transform *= getTransform();
 		target.draw(body, states);
 		target.draw(leftWing, states);
@@ -58,8 +55,7 @@ namespace mk {
 	}
 
 	void RayShape::pointAt(sf::Vector2f arrowHead) {
-		float newLen
-			= sqrtf(arrowHead.x * arrowHead.x + arrowHead.y * arrowHead.y);
+		float newLen = sqrtf(arrowHead.x * arrowHead.x + arrowHead.y * arrowHead.y);
 		setSize(width, newLen, wingLength);
 		auto angle = (float) atan(arrowHead.y / arrowHead.x);
 		angle      = math::radiansToDegrees(angle);

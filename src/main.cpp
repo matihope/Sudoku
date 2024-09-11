@@ -16,12 +16,12 @@ public:
 			std::make_pair("Empty board", sudoku::SudokuGame::Difficulty::EMPTY),
 		};
 
-		std::optional<mk::GUI::Button*> previous_button;
+		std::optional<mk::gui::Button*> previous_button;
 		for (auto&& [button_text, difficulty]: button_presets) {
 			buttons.push_back({ nullptr, difficulty });
 			auto&& button = buttons.back().first;
-			button        = addChild<mk::GUI::Button>(game, game.getDefaultFont(), button_text);
-			button->setAlignment(mk::GUI::HAlignment::MIDDLE, mk::GUI::VAlignment::TOP);
+			button        = addChild<mk::gui::Button>(game, game.getDefaultFont(), button_text);
+			button->setAlignment(mk::gui::HAlignment::MIDDLE, mk::gui::VAlignment::TOP);
 			button->setMinSize({ game.getViewportSize().x / 3.f, 50.f });
 			button->setMinSpaceBetween({ 5, 5 });
 			float button_y = game.getViewportSize().y / 3.;
@@ -39,7 +39,7 @@ public:
 	}
 
 private:
-	std::vector<std::pair<mk::GUI::Button*, sudoku::SudokuGame::Difficulty>> buttons;
+	std::vector<std::pair<mk::gui::Button*, sudoku::SudokuGame::Difficulty>> buttons;
 };
 
 int main() {

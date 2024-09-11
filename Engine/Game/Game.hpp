@@ -29,7 +29,7 @@ namespace mk {
 		std::stack<std::unique_ptr<WorldEntity>> m_scene_stack;
 		sf::View                                 m_view;
 		sf::Font*                                m_default_font;
-		GUI::Label                               m_fps_label;
+		gui::Label                               m_fps_label;
 		math::Vector2f                           m_mouse_pos;
 		sf::Image                                icon;
 

@@ -23,9 +23,9 @@ private:
 	bool               taking_notes = false;
 	sudoku::SudokuGame sudoku;
 
-	mk::GUI::Button* menu_button = nullptr;
-	mk::GUI::Button* note_button = nullptr;
-	mk::GUI::Button* undo_button = nullptr;
+	mk::gui::Button* menu_button = nullptr;
+	mk::gui::Button* note_button = nullptr;
+	mk::gui::Button* undo_button = nullptr;
 
-	std::array<mk::GUI::Button*, 10> number_buttons{};
+	std::array<mk::gui::Button*, 10> number_buttons{};
 };

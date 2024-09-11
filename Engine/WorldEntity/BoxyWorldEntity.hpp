@@ -16,8 +16,7 @@ namespace mk {
 		[[nodiscard]]
 		math::Vector2u getMaxSize() const;
 
-		void draw(sf::RenderTarget &target, sf::RenderStates states)
-			const override;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 	private:
 		math::Vector2u maxSize = { 0, 0 };

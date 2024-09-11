@@ -9,7 +9,7 @@
 #include <Updatable/Updatable.hpp>
 #include <memory>
 
-namespace mk::GUI {
+namespace mk::gui {
 	class Button: public WorldEntity, public Clickable {
 		Button();
 

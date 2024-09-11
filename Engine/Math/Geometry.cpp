@@ -11,29 +11,22 @@
 
 namespace mk::math {
 
-	float _dotProduct(const Vector2f &vec1, const Vector2f &vec2) {
+	float _dotProduct(const Vector2f& vec1, const Vector2f& vec2) {
 		return vec1.x * vec2.x + vec1.y * vec2.y;
 	}
 
 	// here vectors are points
-	float _determinant(
-		const Vector2f &tail, const Vector2f &head1, const Vector2f &head2
-	) {
-		return (head1.x - tail.x) * (head2.y - tail.y)
-		     - (head2.x - tail.x) * (head1.y - tail.y);
+	float _determinant(const Vector2f& tail, const Vector2f& head1, const Vector2f& head2) {
+		return (head1.x - tail.x) * (head2.y - tail.y) - (head2.x - tail.x) * (head1.y - tail.y);
 	}
 
-	bool isPointInsideConvex(
-		const std::vector<Vector2f> &convex, const Vector2f &point
-	) {
+	bool isPointInsideConvex(const std::vector<Vector2f>& convex, const Vector2f& point) {
 		if (convex.size() < 3) return false;
 
 		bool has_neg = false;
 		bool has_pos = false;
 		for (std::size_t i = 0; i < convex.size(); i++) {
-			int now_sign = sign(
-				_determinant(point, convex[i], convex[(i + 1) % convex.size()])
-			);
+			int now_sign = sign(_determinant(point, convex[i], convex[(i + 1) % convex.size()]));
 			if (now_sign == -1) has_neg = true;
 			if (now_sign == 1) has_pos = true;
 			if (has_neg && has_pos) return false;
@@ -41,15 +34,13 @@ namespace mk::math {
 		return true;
 	}
 
-	Vector2f _getPerpendicular(const Vector2f &vec) {
-		return { -vec.y, vec.x };
-	}
+	Vector2f _getPerpendicular(const Vector2f& vec) { return { -vec.y, vec.x }; }
 
 	bool doShapesIntersect(
-		const std::vector<Vector2f> &shape1, const std::vector<Vector2f> &shape2
+		const std::vector<Vector2f>& shape1, const std::vector<Vector2f>& shape2
 	) {
-		const std::vector<Vector2f> *s1 = &shape1;
-		const std::vector<Vector2f> *s2 = &shape2;
+		const std::vector<Vector2f>* s1 = &shape1;
+		const std::vector<Vector2f>* s2 = &shape2;
 		for (size_t t = 0; t < 2; ++t) {
 			if (t == 1) {
 				s1 = &shape2;
@@ -62,14 +53,14 @@ namespace mk::math {
 				));
 				float    min1          = FLOAT_INFINITY;
 				float    max1          = -FLOAT_INFINITY;
-				for (auto j : *s1) {
+				for (auto j: *s1) {
 					float dp = _dotProduct(perpendicular, j);
 					min1     = std::min(min1, dp);
 					max1     = std::max(max1, dp);
 				}
 				float min2 = FLOAT_INFINITY;
 				float max2 = -FLOAT_INFINITY;
-				for (auto j : *s2) {
+				for (auto j: *s2) {
 					float dp = _dotProduct(perpendicular, j);
 					min2     = std::min(min2, dp);
 					max2     = std::max(max2, dp);
@@ -80,18 +71,14 @@ namespace mk::math {
 		return true;
 	}
 
-	Vector2f findLineIntersection(
-		Vector2f p1, Vector2f p2, Vector2f p3, Vector2f p4
-	) {
-		float px
-			= ((p1.x * p2.y - p1.y * p2.x) * (p3.x - p4.x)
-		       - (p1.x - p2.x) * (p3.x * p4.y - p3.y * p4.x))
-		    / ((p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x));
+	Vector2f findLineIntersection(Vector2f p1, Vector2f p2, Vector2f p3, Vector2f p4) {
+		float px = ((p1.x * p2.y - p1.y * p2.x) * (p3.x - p4.x)
+		            - (p1.x - p2.x) * (p3.x * p4.y - p3.y * p4.x))
+		         / ((p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x));
 
-		float py
-			= ((p1.x * p2.y - p1.y * p2.x) * (p3.y - p4.y)
-		       - (p1.y - p2.y) * (p3.x * p4.y - p3.y * p4.x))
-		    / ((p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x));
+		float py = ((p1.x * p2.y - p1.y * p2.x) * (p3.y - p4.y)
+		            - (p1.y - p2.y) * (p3.x * p4.y - p3.y * p4.x))
+		         / ((p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x));
 
 		return { px, py };
 	}
@@ -100,10 +87,10 @@ namespace mk::math {
 		if (start == end) return { start };
 
 		math::Vector2i currentPosition = start;
-		math::Vector2f dirVec = normalizeVector((end - start).type<float>());
-		math::Vector2f step   = { dirVec.y / dirVec.x, dirVec.x / dirVec.y };
-		math::Vector2f stepLength  = { std::sqrt(step.x * step.x + 1),
-			                           std::sqrt(step.y * step.y + 1) };
+		math::Vector2f dirVec          = normalizeVector((end - start).type<float>());
+		math::Vector2f step            = { dirVec.y / dirVec.x, dirVec.x / dirVec.y };
+		math::Vector2f stepLength
+			= { std::sqrt(step.x * step.x + 1), std::sqrt(step.y * step.y + 1) };
 		math::Vector2f rayProgress = { 0, 0 };
 
 		float distance    = 0;

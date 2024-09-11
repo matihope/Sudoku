@@ -6,7 +6,7 @@
 
 namespace mk {
 
-	QuickSprite::QuickSprite(sf::Vertex *quad) { m_quad = quad; }
+	QuickSprite::QuickSprite(sf::Vertex* quad) { m_quad = quad; }
 
 	void QuickSprite::setPosition(sf::Vector2f position) {
 		sf::Vector2f size  = getSize();
@@ -15,15 +15,10 @@ namespace mk {
 	}
 
 	void QuickSprite::setSize(sf::Vector2f newSize) {
-		m_quad[1].position = sf::Vector2f(
-			m_quad[0].position.x + newSize.x, m_quad[0].position.y
-		);
-		m_quad[2].position = sf::Vector2f(
-			m_quad[0].position.x + newSize.x, m_quad[0].position.y + newSize.y
-		);
-		m_quad[3].position = sf::Vector2f(
-			m_quad[0].position.x, m_quad[0].position.y + newSize.y
-		);
+		m_quad[1].position = sf::Vector2f(m_quad[0].position.x + newSize.x, m_quad[0].position.y);
+		m_quad[2].position
+			= sf::Vector2f(m_quad[0].position.x + newSize.x, m_quad[0].position.y + newSize.y);
+		m_quad[3].position = sf::Vector2f(m_quad[0].position.x, m_quad[0].position.y + newSize.y);
 	}
 
 	sf::Vector2f QuickSprite::getPosition() const { return m_quad[0].position; }
@@ -36,15 +31,12 @@ namespace mk {
 
 	void QuickSprite::setTexSize(sf::Vector2f newSize) {
 		newSize -= sf::Vector2f(2 * M_TEX_BUFFER, 2 * M_TEX_BUFFER);
-		m_quad[1].texCoords = sf::Vector2f(
-			m_quad[0].texCoords.x + newSize.x, m_quad[0].texCoords.y
-		);
-		m_quad[2].texCoords = sf::Vector2f(
-			m_quad[0].texCoords.x + newSize.x, m_quad[0].texCoords.y + newSize.y
-		);
-		m_quad[3].texCoords = sf::Vector2f(
-			m_quad[0].texCoords.x, m_quad[0].texCoords.y + newSize.y
-		);
+		m_quad[1].texCoords
+			= sf::Vector2f(m_quad[0].texCoords.x + newSize.x, m_quad[0].texCoords.y);
+		m_quad[2].texCoords
+			= sf::Vector2f(m_quad[0].texCoords.x + newSize.x, m_quad[0].texCoords.y + newSize.y);
+		m_quad[3].texCoords
+			= sf::Vector2f(m_quad[0].texCoords.x, m_quad[0].texCoords.y + newSize.y);
 	}
 
 	sf::Vector2f QuickSprite::getTexSize() const {
@@ -54,9 +46,8 @@ namespace mk {
 	}
 
 	void QuickSprite::setTexPosition(sf::Vector2f position) {
-		sf::Vector2f size = getTexSize();
-		m_quad[0].texCoords
-			= position + sf::Vector2f(M_TEX_BUFFER, M_TEX_BUFFER);
+		sf::Vector2f size   = getTexSize();
+		m_quad[0].texCoords = position + sf::Vector2f(M_TEX_BUFFER, M_TEX_BUFFER);
 		setTexSize(size);
 	}
 
@@ -69,20 +60,14 @@ namespace mk {
 		setTexPosition({ -1, -1 });
 	}
 
-	void QuickSprite::setColor(
-		sf::Color vert0, sf::Color vert1, sf::Color vert2, sf::Color vert3
-	) {
+	void QuickSprite::setColor(sf::Color vert0, sf::Color vert1, sf::Color vert2, sf::Color vert3) {
 		m_quad[0].color = vert0;
 		m_quad[1].color = vert1;
 		m_quad[2].color = vert2;
 		m_quad[3].color = vert3;
 	}
 
-	void QuickSprite::setColor(sf::Color color) {
-		setColor(color, color, color, color);
-	}
+	void QuickSprite::setColor(sf::Color color) { setColor(color, color, color, color); }
 
-	sf::Color QuickSprite::getColor(unsigned int vertexId) {
-		return m_quad[vertexId].color;
-	}
+	sf::Color QuickSprite::getColor(unsigned int vertexId) { return m_quad[vertexId].color; }
 }  // namespace mk
