@@ -16,6 +16,10 @@ namespace mk {
 
 		void setColor(const sf::Color& color);
 
+		void setSize(const mk::math::Vector2f& size);
+
+		mk::math::Vector2f getSize() const;
+
 	private:
 		sf::RectangleShape rect;
 	};

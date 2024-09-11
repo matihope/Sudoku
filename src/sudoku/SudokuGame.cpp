@@ -192,8 +192,8 @@ namespace sudoku {
 							cpy(column, row).main_digit = next_value;
 
 							auto result = cpy.isAmbiguousImpl();
-							if (result.is_ambiguous) return { true, result.is_fillable };
-							if (result.is_fillable) {
+							if (result.is_ambiguous) return { true, result.is_solvable };
+							if (result.is_solvable) {
 								if (found) return { true, true };
 								found = true;
 							}

@@ -1,6 +1,7 @@
 #include "SudokuSceneEntity.hpp"
 #include "GUI/Button.hpp"
 #include "GUI/Label.hpp"
+#include "GUI/Timer.hpp"
 #include "SFML/Window/Keyboard.hpp"
 #include "SudokuGame.hpp"
 #include "Utils/Converters.hpp"
@@ -29,6 +30,7 @@ void SudokuScene::handleEvent(mk::Game& game, const sf::Event& event) {
 		sudoku.solve();
 		board->load(sudoku.getBoard());
 	}
+	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::U) undo();
 }
 
 void SudokuScene::spawnButtons(mk::Game& game) {
@@ -95,7 +97,7 @@ void SudokuScene::spawnButtons(mk::Game& game) {
 	note_button->setBackgroundColors(normal_color, hover_color, press_color);
 	note_button->setFontColors(font_color);
 
-	// Difficulty and time
+	// Difficulty label
 	auto diff_label = addChild<mk::gui::Label>(
 		game, game.getDefaultFont(), "Difficulty: " + sudoku::difficultyToString(difficulty)
 	);
@@ -103,6 +105,15 @@ void SudokuScene::spawnButtons(mk::Game& game) {
 	);
 	diff_label->setAlignment(mk::gui::HAlignment::LEFT, mk::gui::VAlignment::CENTER);
 	diff_label->setTextSize(30);
+
+	// Timer label
+	timer = addChild<mk::gui::Timer>(
+		game, std::move(mk::gui::Timer::Increasing(game.getDefaultFont()))
+	);
+	timer->setPosition(diff_label->getPosition());
+	timer->setAlignment(mk::gui::HAlignment::RIGHT, mk::gui::VAlignment::CENTER);
+	timer->move(menu_button_width, 0.0);
+	timer->enableHours(true);
 }
 
 void SudokuScene::onUpdate(mk::Game& game, float dt) {
@@ -113,14 +124,15 @@ void SudokuScene::onUpdate(mk::Game& game, float dt) {
 		if (digit_button->isPressed()) handlePutDigit(digit);
 	}
 
-	if (undo_button->isPressed()) {
-		sudoku.undo();
-		board->load(sudoku.getBoard());
-	}
+	if (undo_button->isPressed()) undo();
+
 	if (note_button->isPressed()) {
 		taking_notes = !taking_notes;
 		note_button->setText(std::string("Notes: ") + (taking_notes ? "On" : "Off"));
 	}
+
+
+	timer->setStop(sudoku.isOver());
 }
 
 void SudokuScene::handlePutDigit(sudoku::SudokuValue digit) {
@@ -133,4 +145,9 @@ void SudokuScene::handlePutDigit(sudoku::SudokuValue digit) {
 			sudoku.tryPlay(col, row, digit);
 		board->load(sudoku.getBoard());
 	}
+}
+
+void SudokuScene::undo() {
+	sudoku.undo();
+	board->load(sudoku.getBoard());
 }

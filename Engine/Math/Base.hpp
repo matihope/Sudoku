@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-#define FLOAT_INFINITY 1000000000.f
+#define FLOAT_INFINITY std::numeric_limits<float>::infinity()
 #define INT_INFINITY   1'000'000'000
 #define LL_INFINITY    1'000'000'000'000'000'000LL
 #define EPS_ZERO       1e-12

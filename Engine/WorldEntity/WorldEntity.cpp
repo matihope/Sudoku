@@ -1,7 +1,6 @@
 #include "WorldEntity.hpp"
 
 #include <WorldEntity/WorldEntity.hpp>
-#include <iostream>
 
 namespace mk {
 
@@ -42,16 +41,6 @@ namespace mk {
 			for (const auto& layer: m_entity_pool)
 				for (auto& entity: layer.second) target.draw(*entity, copied_states);
 		}
-	}
-
-	WorldEntity* WorldEntity::addChild(
-		Game& game, std::unique_ptr<WorldEntity> child, unsigned int drawOrder
-	) {
-		child->addParent(this);
-		m_entity_pool[drawOrder].push_back(std::move(child));
-		auto&& my_child = m_entity_pool[drawOrder].back();
-		if (m_called_ready) my_child->ready(game);
-		return my_child.get();
 	}
 
 	void WorldEntity::addParent(WorldEntity* parent) { m_parent = parent; }

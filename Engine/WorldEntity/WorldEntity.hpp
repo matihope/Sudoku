@@ -1,4 +1,5 @@
 #pragma once
+#include "ResPath/ResPath.hpp"
 #include <CollisionComponent/CollisionComponent.hpp>
 #include <SFML/Graphics.hpp>
 #include <Updatable/Updatable.hpp>
@@ -40,15 +41,21 @@ namespace mk {
 		void         addParent(WorldEntity* parent);
 		WorldEntity* getParent();
 
-		WorldEntity*
-			addChild(Game& game, std::unique_ptr<WorldEntity> entity, unsigned int drawOrder = 0);
+		template<class T, unsigned int drawOrder = 0>
+		requires std::is_base_of_v<WorldEntity, T>
+		T* addChild(Game& game, std::unique_ptr<T> child) {
+			child->addParent(this);
+			auto my_child = child.get();
+			m_entity_pool[drawOrder].push_back(std::move(child));
+			if (m_called_ready) m_entity_pool[drawOrder].back()->ready(game);
+			return my_child;
+		}
 
 		template<class T, unsigned int drawOrder = 0, class... Args>
-		T* addChild(Game& game, Args&&... args) {
+		requires std::is_base_of_v<WorldEntity, T> T* addChild(Game& game, Args&&... args) {
 			auto new_child     = std::make_unique<T>(std::forward<Args>(args)...);
 			auto new_child_ptr = new_child.get();
-			addChild(game, std::move(new_child), drawOrder);
-			return new_child_ptr;
+			return addChild<T, drawOrder>(game, std::move(new_child));
 		}
 
 		void ready(Game& game) override;

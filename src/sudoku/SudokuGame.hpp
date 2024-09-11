@@ -90,7 +90,7 @@ namespace sudoku {
 	private:
 		struct IsAmbiguousResult {
 			bool is_ambiguous;
-			bool is_fillable;
+			bool is_solvable;
 		};
 
 		[[nodiscard]]

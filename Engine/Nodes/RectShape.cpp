@@ -16,4 +16,10 @@ namespace mk {
 	}
 
 	void RectShape::setColor(const sf::Color& color) { rect.setFillColor(color); }
+
+	void RectShape::setSize(const mk::math::Vector2f& size) {
+		rect.setSize(size.as<sf::Vector2f>());
+	}
+
+	mk::math::Vector2f RectShape::getSize() const { return { rect.getSize().x, rect.getSize().y }; }
 }  // namespace mk

@@ -13,8 +13,8 @@ namespace mk::gui {
 	class Button: public WorldEntity, public Clickable {
 		Button();
 
-		Label              m_label;
-		sf::RectangleShape m_background;
+		Label         m_label;
+		mk::RectShape m_background;
 
 		sf::Color m_background_color_normal = sf::Color(60, 60, 60);
 		sf::Color m_background_color_hover  = sf::Color(50, 50, 50);

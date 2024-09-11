@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GUI/Button.hpp"
+#include "GUI/Timer.hpp"
 #include "SudokuBoardEntity.hpp"
 #include "SudokuGame.hpp"
 
@@ -19,6 +20,8 @@ private:
 
 	void handlePutDigit(sudoku::SudokuValue digit);
 
+	void undo();
+
 	SudokuBoardEntity*             board        = nullptr;
 	bool                           taking_notes = false;
 	sudoku::SudokuGame             sudoku;
@@ -29,4 +32,6 @@ private:
 	mk::gui::Button* undo_button = nullptr;
 
 	std::array<mk::gui::Button*, 10> number_buttons{};
+
+	mk::gui::Timer* timer = nullptr;
 };

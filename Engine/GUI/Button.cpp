@@ -6,7 +6,7 @@
 namespace mk::gui {
 	Button::Button() {
 		m_label.setAlignment(HAlignment::MIDDLE, VAlignment::CENTER);
-		m_background.setFillColor(m_background_color_normal);
+		m_background.setColor(m_background_color_normal);
 	}
 
 	Button::Button(sf::Font* font, const std::string& text): Button() {
@@ -52,17 +52,17 @@ namespace mk::gui {
 
 	void Button::onHover() {
 		m_label.setColor(m_font_color_hover);
-		m_background.setFillColor(m_background_color_hover);
+		m_background.setColor(m_background_color_hover);
 	}
 
 	void Button::onStopHover() {
 		m_label.setColor(m_font_color_normal);
-		m_background.setFillColor(m_background_color_normal);
+		m_background.setColor(m_background_color_normal);
 	}
 
 	void Button::onHold() {
 		m_label.setColor(m_font_color_press);
-		m_background.setFillColor(m_background_color_press);
+		m_background.setColor(m_background_color_press);
 	}
 
 	void Button::update(Game& game, const float dt) { Clickable::update(game, dt); }

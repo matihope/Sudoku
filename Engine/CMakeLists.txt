@@ -4,6 +4,7 @@ set(ENGINE_SOURCES
         Game/Game.cpp
         GUI/Label.cpp
         GUI/Button.cpp
+        GUI/Timer.cpp
         JsonBridge/JsonBridge.cpp
         CollisionComponent/CollisionComponent.cpp
         CollisionShape/CollisionShape.cpp
