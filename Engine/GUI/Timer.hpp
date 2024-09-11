@@ -38,8 +38,8 @@ namespace mk::gui {
 		bool enable_milisecs = false;
 		bool enable_hours    = false;
 
-		sf::Font*       font;
-		mk::gui::Label* label;
+		sf::Font*       font  = nullptr;
+		mk::gui::Label* label = nullptr;
 
 		bool stop = false;
 	};
