@@ -1,5 +1,5 @@
 *build*
 .idea
-AI_FUN
 .vscode
 .cache
+.DS_Store
