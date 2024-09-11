@@ -11,7 +11,9 @@ place it on the board.
 
 ## Hidden feature
 
-Pressing SPACE key fills the board. Useful with "Empty Board" mode, when we want to solve an already existing Sudoku.
+Pressing SPACE key solves the board. Useful with "Empty Board" mode, when we want to solve an already existing Sudoku.
+
+Note: all game modes serve a board with one, unambiguous solution. In mode "Empty board", upon finding a solution the result is returned. It is possible to generate multiple solutions (by pressing Undo and solving again).
 
 ## Building
 

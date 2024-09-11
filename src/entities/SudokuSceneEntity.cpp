@@ -6,7 +6,9 @@
 #include "Utils/Converters.hpp"
 #include <cstdint>
 
-SudokuScene::SudokuScene(sudoku::SudokuGame::Difficulty difficulty): sudoku(difficulty) {}
+SudokuScene::SudokuScene(sudoku::SudokuGame::Difficulty difficulty):
+	  difficulty(difficulty),
+	  sudoku(difficulty) {}
 
 void SudokuScene::onReady(mk::Game& game) {
 	board = addChild<SudokuBoardEntity>(game);
@@ -24,7 +26,7 @@ void SudokuScene::handleEvent(mk::Game& game, const sf::Event& event) {
 		for (sudoku::SudokuValue digit: sudoku::value_range)
 			if (event.key.code == num_keys[digit()]) handlePutDigit(digit);
 	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
-		sudoku.fill();
+		sudoku.solve();
 		board->load(sudoku.getBoard());
 	}
 }
@@ -52,7 +54,7 @@ void SudokuScene::spawnButtons(mk::Game& game) {
 
 
 	// Num buttons
-	mk::math::Vector2f top_left         = { board->getBounds().width + padding, padding };
+	mk::math::Vector2f top_left = { board->getBounds().width + padding, padding * 2 + 80.f };
 	float              num_button_width = (menu_button_width - padding * 2) / 3.f;
 	for (uint8_t y = 0; y < 3; y++) {
 		for (uint8_t x = 0; x < 3; x++) {
@@ -94,7 +96,13 @@ void SudokuScene::spawnButtons(mk::Game& game) {
 	note_button->setFontColors(font_color);
 
 	// Difficulty and time
-	auto diff = addChild<mk::gui::Label>();
+	auto diff_label = addChild<mk::gui::Label>(
+		game, game.getDefaultFont(), "Difficulty: " + sudoku::difficultyToString(difficulty)
+	);
+	diff_label->setPosition((top_left - mk::math::Vector2f(0.f, 40.f + padding)).as<sf::Vector2f>()
+	);
+	diff_label->setAlignment(mk::gui::HAlignment::LEFT, mk::gui::VAlignment::CENTER);
+	diff_label->setTextSize(30);
 }
 
 void SudokuScene::onUpdate(mk::Game& game, float dt) {

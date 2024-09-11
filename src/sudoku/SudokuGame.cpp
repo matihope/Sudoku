@@ -2,15 +2,13 @@
 #include "Random/Random.hpp"
 #include <iostream>
 
-namespace {}
-
 namespace sudoku {
 	uint32_t loop_counter = 0;
 
 	SudokuGame::SudokuGame(SudokuGame::Difficulty difficulty, std::optional<uint32_t> seed) {
 		if (difficulty != Difficulty::EMPTY) {
 			// Fill the board
-			initial.fill_random(seed);
+			initial.solve_random(seed);
 
 			// Blank some squares to make it fun
 			history.push_back(initial);
@@ -44,18 +42,18 @@ namespace sudoku {
 
 	const SudokuBoard& SudokuGame::getBoard() const { return history.back(); }
 
-	void SudokuGame::fill() {
+	void SudokuGame::solve() {
 		auto board = history.back();
-		board.fill();
+		board.solve();
 		history.push_back(board);
 	}
 
-	void SudokuBoard::fill_random(std::optional<uint32_t> seed) {
+	void SudokuBoard::solve_random(std::optional<uint32_t> seed) {
 		if (seed.has_value())
 			mk::Random::initSeed(*seed);
 		else
 			mk::Random::initRandom();
-		fill();
+		solve();
 	}
 
 	bool SudokuBoard::place_digit(SudokuValue column, SudokuValue row, SudokuValue value) {
@@ -75,7 +73,7 @@ namespace sudoku {
 		for (SudokuValue check_row: value_range)
 			operator()(column, check_row).note_digits[value()] = false;
 
-		// Check 3x3 square
+		// 3x3 square
 		for (SudokuValue check_col: SudokuGame::getColOrRowRangeForValue(column))
 			for (SudokuValue check_row: SudokuGame::getColOrRowRangeForValue(row))
 				operator()(check_col, check_row).note_digits[value()] = false;
@@ -110,12 +108,13 @@ namespace sudoku {
 		return board[column() * 9 + row() - 9];
 	}
 
-	std::ostream& operator<<(std::ostream& out, const SudokuBoard& b) {
-		out << std::string(19, '-') << '\n';
+	std::ostream& operator<<(std::ostream& out, const SudokuBoard& board) {
+		constexpr uint8_t width = 19;
+		out << std::string(width, '-') << '\n';
 		for (SudokuValue row: value_range) {
 			out << '|';
 			for (SudokuValue col: value_range) {
-				auto&& sq = b(col, row);
+				auto&& sq = board(col, row);
 				if (sq.main_digit.has_value())
 					out << sq.main_digit.value();
 				else
@@ -127,9 +126,9 @@ namespace sudoku {
 					out << ' ';
 			}
 			out << "\n";
-			if (row == 3 || row == 6) out << std::string(19, '-') << '\n';
+			if (row == 3 || row == 6) out << std::string(width, '-') << '\n';
 		}
-		out << std::string(19, '-') << '\n';
+		out << std::string(width, '-') << '\n';
 		return out;
 	}
 
@@ -152,7 +151,7 @@ namespace sudoku {
 
 	uint32_t getLoopCounter() { return loop_counter; }
 
-	bool SudokuBoard::fill() {
+	bool SudokuBoard::solve() {
 		std::array<SudokuValue, 9> order = value_range;
 		mk::Random::shuffle(order.begin(), order.end());
 
@@ -164,7 +163,7 @@ namespace sudoku {
 					for (SudokuValue next_value: order) {
 						if (can_place_digit(column, row, next_value)) {
 							cpy(column, row).main_digit = SudokuValue(next_value);
-							if (cpy.fill()) {
+							if (cpy.solve()) {
 								*this = cpy;
 								return true;
 							}
@@ -181,7 +180,6 @@ namespace sudoku {
 
 	SudokuBoard::IsAmbiguousResult SudokuBoard::isAmbiguousImpl() const {
 		std::array<SudokuValue, 9> order = value_range;
-		mk::Random::shuffle(order.begin(), order.end());
 
 		SudokuBoard cpy = *this;
 		for (SudokuValue column: value_range) {
@@ -248,8 +246,10 @@ namespace sudoku {
 		return false;
 	}
 
-	void SudokuGame::undo() {
-		if (history.size() > 1) history.pop_back();
+	bool SudokuGame::undo() {
+		if (history.size() <= 1) return false;
+		history.pop_back();
+		return true;
 	}
 
 	bool SudokuGame::isOver() const {
@@ -266,5 +266,23 @@ namespace sudoku {
 				if (!operator()(col, row).is_correct) return false;
 		}
 		return true;
+	}
+
+	std::string difficultyToString(SudokuGame::Difficulty difficulty) {
+		switch (difficulty) {
+		case SudokuGame::Difficulty::EMPTY:
+			return "Empty board";
+		case SudokuGame::Difficulty::NONE:
+			return "Full board";
+		case SudokuGame::Difficulty::EASY:
+			return "Easy";
+		case SudokuGame::Difficulty::NORMAL:
+			return "Normal";
+		case SudokuGame::Difficulty::HARD:
+			return "Hard";
+		case SudokuGame::Difficulty::EXPERT:
+			return "Expert";
+			break;
+		}
 	}
 }

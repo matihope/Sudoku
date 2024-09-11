@@ -6,8 +6,6 @@
 #include <ostream>
 
 namespace sudoku {
-	uint32_t getLoopCounter();
-
 	class SudokuValue {
 	public:
 		template<class T>
@@ -40,8 +38,6 @@ namespace sudoku {
 
 	constexpr std::array<SudokuValue, 9> value_range = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-	struct SudokuBoard;
-
 	struct SudokuSquare {
 		std::optional<SudokuValue> main_digit{};
 		std::array<bool, 10>       note_digits{};
@@ -51,7 +47,12 @@ namespace sudoku {
 
 	class SudokuBoard {
 	public:
-		void fill_random(std::optional<uint32_t> seed = {});
+		/**
+		 * @brief Solves the board after setting the random to seed. If no seed
+		 * is provided then random seed is used.
+		 */
+
+		void solve_random(std::optional<uint32_t> seed = {});
 
 		/**
 		 * @brief Puts a value at column and row. Fails if it's an illegal move.
@@ -69,10 +70,10 @@ namespace sudoku {
 		friend std::ostream& operator<<(std::ostream& out, const SudokuBoard& board);
 
 		/**
-		 * @brief Tries to fills the board. If fails to fill the board state is incorrect.
-		 * @return True if filled successfully, false otherwise.
+		 * @brief Tries to solve the board. If fails to solve the board state is incorrect.
+		 * @return True if solved successfully, false otherwise.
 		 */
-		bool fill();
+		bool solve();
 
 		/**
 		 * @brief Checks is there is an only one way to solve this board.
@@ -81,7 +82,7 @@ namespace sudoku {
 		bool isAmbiguous() const;
 
 		/**
-		 * @brief Checks if all squares have not set the is_correct flag.
+		 * @brief Checks if all squares have the is_correct flag true.
 		 */
 		bool isCorrect() const;
 
@@ -102,24 +103,30 @@ namespace sudoku {
 	public:
 		enum class Difficulty { EMPTY, NONE, EASY, NORMAL, HARD, EXPERT };
 
-		explicit SudokuGame(Difficulty difficulty, std::optional<uint32_t> = {});
+		explicit SudokuGame(Difficulty difficulty, std::optional<uint32_t> seed = {});
 
 		[[nodiscard]]
 		const SudokuBoard& getBoard() const;
 
-		void fill();
+		void solve();
 
+		/**
+		 * @brief Checks if all squares are filled.
+		 */
 		bool isOver() const;
 
 		bool tryPlay(SudokuValue col, SudokuValue row, SudokuValue value);
-
 		bool toggleNote(SudokuValue col, SudokuValue row, SudokuValue digit);
 
-		void undo();
+		/**
+		 * @brief Reverts the last call of tryPlay() or toggleNote().
+		 */
+		bool undo();
 
 		/**
 		 * @brief A function that helps to iterate over all squares in a 3x3 square,
-		 * that should contain unique digits. This returns column or row numbers.
+		 * that should contain unique digits. For each set, if the set contains value,
+		 * then this set is the result. Sets: [1, 2, 3], [4, 5, 6], [7, 8, 9].
 		 */
 		static std::array<SudokuValue, 3> getColOrRowRangeForValue(sudoku::SudokuValue value);
 
@@ -128,4 +135,6 @@ namespace sudoku {
 
 		SudokuBoard initial;
 	};
+
+	std::string difficultyToString(SudokuGame::Difficulty difficulty);
 }

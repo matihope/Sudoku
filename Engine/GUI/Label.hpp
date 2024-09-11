@@ -17,6 +17,9 @@ namespace mk::gui {
 	public:
 		Label();
 		explicit Label(sf::Font* font);
+
+		Label(sf::Font* font, const std::string& text);
+
 		void          setFont(sf::Font* font);
 		void          setText(const std::string& text);
 		void          setAlignment(HAlignment newHAlignment, VAlignment newVAlignment);

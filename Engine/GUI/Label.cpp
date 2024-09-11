@@ -1,12 +1,11 @@
-#include "Game/Game.hpp"
-
 #include <GUI/Label.hpp>
-#include <iostream>
 
 namespace mk::gui {
 	Label::Label() { m_text.setCharacterSize(32); }
 
 	Label::Label(sf::Font* font): Label() { setFont(font); }
+
+	Label::Label(sf::Font* font, const std::string& text): Label(font) { setText(text); }
 
 	void Label::setFont(sf::Font* font) {
 		m_text.setFont(*font);

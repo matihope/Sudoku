@@ -8,16 +8,14 @@ class Menu: public mk::WorldEntity {
 public:
 	void onReady(mk::Game& game) override {
 		std::array button_presets = {
-			std::make_pair("Easy", sudoku::SudokuGame::Difficulty::EASY),
-			std::make_pair("Normal", sudoku::SudokuGame::Difficulty::NORMAL),
-			std::make_pair("Hard", sudoku::SudokuGame::Difficulty::HARD),
-			std::make_pair("Expert", sudoku::SudokuGame::Difficulty::EXPERT),
-			std::make_pair("Full board", sudoku::SudokuGame::Difficulty::NONE),
-			std::make_pair("Empty board", sudoku::SudokuGame::Difficulty::EMPTY),
+			sudoku::SudokuGame::Difficulty::EASY, sudoku::SudokuGame::Difficulty::NORMAL,
+			sudoku::SudokuGame::Difficulty::HARD, sudoku::SudokuGame::Difficulty::EXPERT,
+			sudoku::SudokuGame::Difficulty::NONE, sudoku::SudokuGame::Difficulty::EMPTY,
 		};
 
 		std::optional<mk::gui::Button*> previous_button;
-		for (auto&& [button_text, difficulty]: button_presets) {
+		for (auto difficulty: button_presets) {
+			auto button_text = sudoku::difficultyToString(difficulty);
 			buttons.push_back({ nullptr, difficulty });
 			auto&& button = buttons.back().first;
 			button        = addChild<mk::gui::Button>(game, game.getDefaultFont(), button_text);

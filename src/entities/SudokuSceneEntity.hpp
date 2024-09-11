@@ -19,9 +19,10 @@ private:
 
 	void handlePutDigit(sudoku::SudokuValue digit);
 
-	SudokuBoardEntity* board        = nullptr;
-	bool               taking_notes = false;
-	sudoku::SudokuGame sudoku;
+	SudokuBoardEntity*             board        = nullptr;
+	bool                           taking_notes = false;
+	sudoku::SudokuGame             sudoku;
+	sudoku::SudokuGame::Difficulty difficulty;
 
 	mk::gui::Button* menu_button = nullptr;
 	mk::gui::Button* note_button = nullptr;
