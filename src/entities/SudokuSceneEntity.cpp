@@ -2,6 +2,7 @@
 #include "GUI/Button.hpp"
 #include "GUI/Label.hpp"
 #include "GUI/Timer.hpp"
+#include "Math/Vector2.hpp"
 #include "SFML/Window/Keyboard.hpp"
 #include "SudokuGame.hpp"
 #include "Utils/Converters.hpp"
@@ -14,7 +15,7 @@ SudokuScene::SudokuScene(sudoku::SudokuGame::Difficulty difficulty):
 void SudokuScene::onReady(mk::Game& game) {
 	board = addChild<SudokuBoardEntity>(game);
 	board->load(sudoku.getBoard());
-	spawnButtons(game);
+	spawnButtonsAndLabels(game);
 }
 
 void SudokuScene::handleEvent(mk::Game& game, const sf::Event& event) {
@@ -33,7 +34,7 @@ void SudokuScene::handleEvent(mk::Game& game, const sf::Event& event) {
 	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::U) undo();
 }
 
-void SudokuScene::spawnButtons(mk::Game& game) {
+void SudokuScene::spawnButtonsAndLabels(mk::Game& game) {
 	float padding = 20.f;
 
 	// Button colors
@@ -98,22 +99,32 @@ void SudokuScene::spawnButtons(mk::Game& game) {
 	note_button->setFontColors(font_color);
 
 	// Difficulty label
-	auto diff_label = addChild<mk::gui::Label>(
-		game, game.getDefaultFont(), "Difficulty: " + sudoku::difficultyToString(difficulty)
+	auto diff_and_mistakes_center = top_left - mk::math::Vector2f(0.f, 40.f + padding);
+	auto diff_diff                = 10.0;
+	auto diff_label               = addChild<mk::gui::Label>(
+        game, game.getDefaultFont(), "Difficulty: " + sudoku::difficultyToString(difficulty)
+    );
+	diff_label->setPosition(
+		(diff_and_mistakes_center - mk::math::Vector2f(0.f, diff_diff)).as<sf::Vector2f>()
 	);
-	diff_label->setPosition((top_left - mk::math::Vector2f(0.f, 40.f + padding)).as<sf::Vector2f>()
-	);
-	diff_label->setAlignment(mk::gui::HAlignment::LEFT, mk::gui::VAlignment::CENTER);
+	diff_label->setAlignment(mk::gui::HAlignment::LEFT, mk::gui::VAlignment::BOTTOM);
 	diff_label->setTextSize(30);
 
 	// Timer label
 	timer = addChild<mk::gui::Timer>(
 		game, std::move(mk::gui::Timer::Increasing(game.getDefaultFont()))
 	);
-	timer->setPosition(diff_label->getPosition());
+	timer->setPosition(diff_and_mistakes_center.as<sf::Vector2f>());
 	timer->setAlignment(mk::gui::HAlignment::RIGHT, mk::gui::VAlignment::CENTER);
 	timer->move(menu_button_width, 0.0);
 	timer->enableHours(true);
+
+	// Mistake label
+	mistake_label = addChild<mk::gui::Label>(game, game.getDefaultFont(), "Mistakes: 0");
+	mistake_label->setAlignment(mk::gui::HAlignment::LEFT, mk::gui::VAlignment::TOP);
+	mistake_label->setPosition(
+		(diff_and_mistakes_center + mk::math::Vector2f(0.f, diff_diff)).as<sf::Vector2f>()
+	);
 }
 
 void SudokuScene::onUpdate(mk::Game& game, float dt) {
@@ -141,8 +152,12 @@ void SudokuScene::handlePutDigit(sudoku::SudokuValue digit) {
 		auto [col, row] = *tile;
 		if (taking_notes)
 			sudoku.toggleNote(col, row, digit);
-		else
-			sudoku.tryPlay(col, row, digit);
+		else if (!sudoku.tryPlay(col, row, digit)) {
+			mistake_counter++;
+			mistake_label->setText(std::string("Mistakes: ") + std::to_string(mistake_counter));
+		}
+
+
 		board->load(sudoku.getBoard());
 	}
 }

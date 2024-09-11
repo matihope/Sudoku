@@ -1,7 +1,6 @@
 #include "GUI/Button.hpp"
 #include "SudokuGame.hpp"
 #include "entities/SudokuSceneEntity.hpp"
-#include <iostream>
 #include <memory>
 
 class Menu: public mk::WorldEntity {

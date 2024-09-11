@@ -16,7 +16,7 @@ public:
 	void onUpdate(mk::Game& game, float dt) override;
 
 private:
-	void spawnButtons(mk::Game& game);
+	void spawnButtonsAndLabels(mk::Game& game);
 
 	void handlePutDigit(sudoku::SudokuValue digit);
 
@@ -34,4 +34,7 @@ private:
 	std::array<mk::gui::Button*, 10> number_buttons{};
 
 	mk::gui::Timer* timer = nullptr;
+
+	uint64_t        mistake_counter = 0;
+	mk::gui::Label* mistake_label   = nullptr;
 };

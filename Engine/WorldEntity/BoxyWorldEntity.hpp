@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "Math/Math.hpp"
 #include "WorldEntity.hpp"
 
 namespace mk {
