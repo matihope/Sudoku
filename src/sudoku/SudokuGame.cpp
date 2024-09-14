@@ -56,8 +56,10 @@ namespace sudoku {
 		solve();
 	}
 
-	bool SudokuBoard::place_digit(SudokuValue column, SudokuValue row, SudokuValue value) {
-		if (!can_place_digit(column, row, value)) return false;
+	bool SudokuBoard::place_digit(
+		SudokuValue column, SudokuValue row, SudokuValue value, bool force
+	) {
+		if (!force && !can_place_digit(column, row, value)) return false;
 		operator()(column, row).main_digit = value;
 
 		// Remove notes
@@ -162,7 +164,7 @@ namespace sudoku {
 					// We do the backtracking from here.
 					for (SudokuValue next_value: order) {
 						if (can_place_digit(column, row, next_value)) {
-							cpy.place_digit(column, row, next_value);
+							cpy.place_digit(column, row, next_value, true);
 							if (cpy.solve()) {
 								*this = cpy;
 								return true;
