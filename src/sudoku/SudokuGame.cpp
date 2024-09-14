@@ -49,8 +49,10 @@ namespace sudoku {
 
 	void SudokuGame::solve() {
 		auto board = history.back();
-		board.solve();
-		history.push_back(board);
+		if (!isOver() && board.isCorrect()) {
+			board.solve();
+			history.push_back(board);
+		}
 	}
 
 	void SudokuBoard::solve_random(std::optional<uint32_t> seed) {

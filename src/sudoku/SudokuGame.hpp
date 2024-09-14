@@ -58,8 +58,7 @@ namespace sudoku {
 		 * @brief Puts a value at column and row. Fails if it's an illegal move unless forced.
 		 * @return true on success, false on failure.
 		 */
-		bool
-			place_digit(SudokuValue column, SudokuValue row, SudokuValue value, bool force = false);
+		bool place_digit(SudokuValue column, SudokuValue row, SudokuValue value, bool force = false);
 
 		[[nodiscard]]
 		bool can_place_digit(SudokuValue column, SudokuValue row, SudokuValue value) const;
