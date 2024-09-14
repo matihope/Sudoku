@@ -214,7 +214,7 @@ namespace sudoku {
 
 		SudokuBoard board = history.back();
 
-		if (board.place_digit(col, row, value)) {
+		if (finally_correct && board.place_digit(col, row, value)) {
 			history.push_back(board);
 			return true;
 		}
