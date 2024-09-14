@@ -111,7 +111,7 @@ namespace sudoku {
 		void solve();
 
 		/**
-		 * @brief Checks if all squares are filled.
+		 * @brief Checks if all squares are filled and correct.
 		 */
 		bool isOver() const;
 

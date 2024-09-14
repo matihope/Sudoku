@@ -162,7 +162,7 @@ namespace sudoku {
 					// We do the backtracking from here.
 					for (SudokuValue next_value: order) {
 						if (can_place_digit(column, row, next_value)) {
-							cpy(column, row).main_digit = SudokuValue(next_value);
+							cpy.place_digit(column, row, next_value);
 							if (cpy.solve()) {
 								*this = cpy;
 								return true;
@@ -214,11 +214,20 @@ namespace sudoku {
 
 		SudokuBoard board = history.back();
 
-		if (finally_correct && board.place_digit(col, row, value)) {
+		// Regular move
+		if (finally_correct) {
+			board.place_digit(col, row, value);
 			history.push_back(board);
 			return true;
 		}
 
+		// Move with empty board
+		if (!original_value.has_value() && board.place_digit(col, row, value)) {
+			history.push_back(board);
+			return true;
+		}
+
+		// Invalid move
 		auto&& tile = board(col, row);
 		if (!tile.is_initial) {
 			for (auto&& note_digit: tile.note_digits) note_digit = false;
@@ -254,8 +263,10 @@ namespace sudoku {
 
 	bool SudokuGame::isOver() const {
 		for (SudokuValue col: value_range) {
-			for (SudokuValue row: value_range)
-				if (!history.back()(col, row).main_digit.has_value()) return false;
+			for (SudokuValue row: value_range) {
+				auto&& sq = history.back()(col, row);
+				if (!sq.main_digit.has_value() || !sq.is_correct) return false;
+			}
 		}
 		return true;
 	}
