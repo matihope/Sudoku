@@ -1,6 +1,5 @@
 #include "SudokuGame.hpp"
 #include "Random/Random.hpp"
-#include <iostream>
 
 namespace sudoku {
 	uint32_t loop_counter = 0;
@@ -9,6 +8,10 @@ namespace sudoku {
 		if (difficulty != Difficulty::EMPTY) {
 			// Fill the board
 			initial.solve_random(seed);
+
+			// Set is_initial to true.
+			for (auto&& col: value_range)
+				for (auto&& row: value_range) initial(col, row).is_initial = true;
 
 			// Blank some squares to make it fun
 			history.push_back(initial);
@@ -26,15 +29,17 @@ namespace sudoku {
 					SudokuValue column = mk::Random::getInt(1, 9);
 					SudokuValue row    = mk::Random::getInt(1, 9);
 					auto&&      sq     = board(column, row);
+					sq.is_initial      = false;
 					if (sq.main_digit.has_value()) {
 						sq.main_digit.reset();
 						if (board.isAmbiguous())
-							sq.main_digit = initial(column, row).main_digit;
+							sq = initial(column, row);
 						else
 							break;
 					}
 				}
 			}
+
 		} else {
 			history.push_back(initial);
 		}

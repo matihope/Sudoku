@@ -147,16 +147,20 @@ void SudokuScene::onUpdate(mk::Game& game, float dt) {
 }
 
 void SudokuScene::handlePutDigit(sudoku::SudokuValue digit) {
-	auto tile = board->getSelectedTile();
+	auto tile             = board->getSelectedTile();
+	auto is_correct_start = sudoku.getBoard().isCorrect();
 	if (tile.has_value()) {
 		auto [col, row] = *tile;
 		if (taking_notes)
 			sudoku.toggleNote(col, row, digit);
-		else if (!sudoku.tryPlay(col, row, digit)) {
+		else
+			sudoku.tryPlay(col, row, digit);
+
+		auto is_correct_end = sudoku.getBoard().isCorrect();
+		if (is_correct_start && !is_correct_end) {
 			mistake_counter++;
 			mistake_label->setText(std::string("Mistakes: ") + std::to_string(mistake_counter));
 		}
-
 
 		board->load(sudoku.getBoard());
 	}
